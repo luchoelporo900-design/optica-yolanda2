@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Óptica Yolanda — 3 Sucursales</title>
+  <meta name="description" content="Catálogo y contactos de Óptica Yolanda. Elige una sucursal para ver dirección, horarios, WhatsApp y productos." />
+  <link rel="icon" href="img/logo_optica_yolanda.png" />
+  <style>
+    :root{--bg:#0b0f14;--card:#121925;--muted:#a8b3c1;--text:#e8eef6;--brand:#3aa2ff;--accent:#00d1b2;--ring:rgba(58,162,255,.45)}
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    body{background:linear-gradient(180deg,#0b0f14,#0e131b 60%,#0b0f14);color:var(--text)}
+    a{color:inherit}
+    .container{max-width:1100px;margin:0 auto;padding:24px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand img{width:44px;height:44px;border-radius:10px;object-fit:cover;box-shadow:0 6px 22px rgba(58,162,255,.35)}
+    h1{font-size:22px;letter-spacing:.4px;margin:0}
+    .subtitle{color:var(--muted);font-size:13px;margin-top:2px}
+    .pill{background:rgba(58,162,255,.12);border:1px solid rgba(58,162,255,.25);padding:8px 12px;border-radius:999px;color:#d9efff;font-size:13px}
+    .tabs{margin:24px 0 12px;display:flex;flex-wrap:wrap;gap:10px}
+    .tab{cursor:pointer;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,#0f1723,#0c121a);color:var(--text);padding:10px 14px;border-radius:12px;font-weight:600;font-size:14px;transition:all .2s ease}
+    .tab:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.18)}
+    .tab.active{background:linear-gradient(180deg,#122034,#0e1a2a);border:1px solid var(--ring);box-shadow:0 0 0 6px rgba(58,162,255,.1)}
+    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
+    @media (max-width:960px){.grid{grid-template-columns:1fr;}}
+    .card{background:linear-gradient(180deg,#0e1622,#0b121c);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+    .card h3{margin:0 0 12px;font-size:18px}
+    .muted{color:var(--muted)}
+    .info{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width:720px){.info{grid-template-columns:1fr}}
+    .badge{display:inline-flex;align-items:center;gap:8px;font-size:12px;padding:6px 10px;border-radius:999px;background:rgba(0,209,178,.12);border:1px solid rgba(0,209,178,.35);color:#c9fff3}
+    .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+    .btn{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(180deg,#121a28,#0c141f);font-weight:700;font-size:14px;text-decoration:none}
+    .btn:hover{filter:brightness(1.08)}
+    .btn.primary{border-color:var(--ring)}
+    .products{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    @media (max-width:960px){.products{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:560px){.products{grid-template-columns:1fr}}
+    .product{background:linear-gradient(180deg,#111a29,#0a111b);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden}
+    .product img{width:100%;height:160px;object-fit:cover;display:block}
+    .product .pbd{padding:12px}
+    .price{font-weight:800;margin-top:4px}
+    footer{margin:26px 0 8px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+    .i{width:16px;height:16px;border-radius:4px;background:linear-gradient(135deg,var(--accent),#86ffe9)}
+    .i.phone{background:linear-gradient(135deg,#25D366,#86ffd1)}
+    .i.map{background:linear-gradient(135deg,#ff9f43,#ffd08a)}
+    .i.clock{background:linear-gradient(135deg,#3aa2ff,#b9dcff)}
+    .form-upload{margin-top:10px}
+    .form-upload input,.form-upload button{padding:10px;margin:5px 0;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:#0f1723;color:var(--text)}
+    .form-upload button{cursor:pointer;background:#3aa2ff;border:0}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <img src="img/logo_optica_yolanda.png" alt="Óptica Yolanda logo" />
+        <div>
+          <h1>Óptica Yolanda</h1>
+          <div class="subtitle">Elige la sucursal y mira dirección, horarios, WhatsApp y catálogo.</div>
+        </div>
+      </div>
+      <div class="pill">Versión con carga por sucursal</div>
+    </header>
+
+    <div class="tabs" id="tabs"></div>
+
+    <div class="grid">
+      <div class="card">
+        <h3 id="branchTitle">Sucursal</h3>
+        <div class="info">
+          <div>
+            <p class="muted"><span class="i map"></span> <strong>Dirección: </strong><span id="addr">—</span></p>
+            <p class="muted"><span class="i clock"></span> <strong>Horarios: </strong><span id="hours">—</span></p>
+            <div class="actions">
+              <a class="btn primary" id="wapp" target="_blank" rel="noopener"><span class="i phone"></span> WhatsApp</a>
+            </div>
+          </div>
+          <div style="min-height:200px">
+            <div id="mapEmbed" style="height:200px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#7f8ea3;font-size:13px;background:rgba(255,255,255,.02)">Mapa (opcional)</div>
+          </div>
+        </div>
+        <hr style="border:0;border-top:1px solid rgba(255,255,255,.08);margin:16px 0"/>
+        <h3>Productos de la sucursal</h3>
+        <div class="products" id="products"></div>
+        <div class="form-upload">
+          <h4>Agregar producto</h4>
+          <input type="text" id="prodName" placeholder="Nombre del producto" />
+          <input type="text" id="prodPrice" placeholder="Precio (ej: ₲ 250.000)" />
+          <input type="file" id="prodImage" accept="image/*" />
+          <button id="uploadBtn">Cargar producto a esta sucursal</button>
+          <div class="muted" style="font-size:12px">Las imágenes se guardan en el servidor y quedarán visibles para esta sucursal.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Contacto rápido</h3>
+        <form id="contactForm">
+          <label>Nombre<br/>
+            <input name="name" required placeholder="Tu nombre" style="width:100%;margin-top:6px;margin-bottom:10px;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:#0e1521;color:var(--text)"/>
+          </label>
+          <label>Mensaje<br/>
+            <textarea name="msg" required rows="4" placeholder="Quiero una cotización para…" style="width:100%;margin-top:6px;margin-bottom:10px;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:#0e1521;color:var(--text)"></textarea>
+          </label>
+          <button class="btn primary" type="submit">Enviar por WhatsApp</button>
+        </form>
+        <hr style="border:0;border-top:1px solid rgba(255,255,255,.08);margin:16px 0"/>
+        <h3>Sobre Óptica Yolanda</h3>
+        <p class="muted">Especialistas en lentes, armazones y contacto. Examen visual y entrega rápida. Calidad al mejor precio.</p>
+      </div>
+    </div>
+
+    <footer>
+      <div>© <span id="year"></span> Óptica Yolanda. Todos los derechos reservados.</div>
+      <div class="muted">Backend Express + Multer para carga por sucursal.</div>
+    </footer>
+  </div>
+
+<script>
+const BRANCHES = [
+  {
+    id:'central',
+    nombre:'Óptica Yolanda Central',
+    direccion:'Azara 1167 casi Brasil',
+    horarios:'08:00 a 18:00',
+    whatsapp:'595986315354'
+  },
+  {
+    id:'fernando',
+    nombre:'Óptica Yolanda Fernando de la Mora',
+    direccion:'Ruta Mcal. José Estigarribia esquina 15 de Mayo',
+    horarios:'08:00 a 18:00',
+    whatsapp:'595983989860'
+  },
+  {
+    id:'caacupe',
+    nombre:'Óptica Yolanda Caacupé',
+    direccion:'Ruta del Maestro 1807 esquina Independencia Nacional',
+    horarios:'08:00 a 18:00',
+    whatsapp:'595972760646'
+  }
+];
+
+const tabsEl = document.getElementById('tabs');
+const productsEl = document.getElementById('products');
+const branchTitle = document.getElementById('branchTitle');
+const addr = document.getElementById('addr');
+const hours = document.getElementById('hours');
+const wapp = document.getElementById('wapp');
+const uploadBtn = document.getElementById('uploadBtn');
+
+let current = BRANCHES[0].id;
+
+function renderTabs(){
+  tabsEl.innerHTML = '';
+  BRANCHES.forEach(b => {
+    const btn = document.createElement('button');
+    btn.className = 'tab' + (b.id===current?' active':'')
+    btn.textContent = b.nombre;
+    btn.onclick = () => { current = b.id; renderBranch(); };
+    tabsEl.appendChild(btn);
+  });
+}
+
+async function fetchProductos(){
+  const r = await fetch(`/productos/${current}`);
+  if(!r.ok){ return []; }
+  return await r.json();
+}
+
+async function renderBranch(){
+  renderTabs();
+  const b = BRANCHES.find(x=>x.id===current);
+  branchTitle.textContent = b.nombre;
+  addr.textContent = b.direccion;
+  hours.textContent = b.horarios;
+  wapp.href = `https://wa.me/${b.whatsapp}`;
+
+  productsEl.innerHTML = '';
+  const data = await fetchProductos(); // {productos:[]}
+  (data.productos||[]).forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'product';
+    card.innerHTML = `
+      <img src="${p.img}" alt="${p.nombre}" />
+      <div class="pbd">
+        <div style="font-weight:700">${p.nombre}</div>
+        <div class="price">${p.precio}</div>
+      </div>`;
+    productsEl.appendChild(card);
+  });
+}
+
+document.getElementById('contactForm').addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const b = BRANCHES.find(x=>x.id===current);
+  const f = new FormData(e.target);
+  const name = encodeURIComponent(f.get('name'));
+  const msg  = encodeURIComponent(f.get('msg'));
+  const text = `Hola, soy ${name}. ${msg}`;
+  window.open(`https://wa.me/${b.whatsapp}?text=${text}`, '_blank');
+});
+
+uploadBtn.addEventListener('click', async ()=>{
+  const name = document.getElementById('prodName').value.trim();
+  const price = document.getElementById('prodPrice').value.trim();
+  const file = document.getElementById('prodImage').files[0];
+  if(!name || !price || !file){ alert('Completa nombre, precio e imagen'); return; }
+  const fd = new FormData();
+  fd.append('nombre', name);
+  fd.append('precio', price);
+  fd.append('imagen', file);
+  const r = await fetch(`/upload/${current}`, { method:'POST', body: fd });
+  if(r.ok){ document.getElementById('prodName').value=''; document.getElementById('prodPrice').value=''; document.getElementById('prodImage').value=''; renderBranch(); }
+  else { alert('No se pudo subir.'); }
+});
+
+document.getElementById('year').textContent = new Date().getFullYear();
+renderBranch();
+</script>
+</body>
+</html>
