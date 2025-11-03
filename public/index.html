@@ -7,146 +7,146 @@
   <meta name="description" content="Catálogo y contactos de Óptica Yolanda. Elige una sucursal para ver dirección, horarios, WhatsApp y productos." />
   <link rel="icon" href="img/logo_optica_yolanda.png" />
   <style>
-   <style>
+ <style>
 :root{
-  --rojo:#a80000;
-  --rojo-oscuro:#6b0000;
-  --card:#ffffff0d;
-  --texto:#ffffff;
-  --muted:#ffe5e5;
+  --rojo:#8b0000;
+  --negro:#000000;
+  --oro:#ffd700;
+  --blanco:#ffffff;
+  --gris:#cccccc;
 }
 
+/* Fondo general con textura */
 body{
   margin:0;
-  font-family:Inter,system-ui,Segoe UI,Roboto,Ubuntu;
-  background:linear-gradient(180deg,var(--rojo),var(--rojo-oscuro));
-  color:var(--texto);
+  font-family:"Poppins",sans-serif;
+  background:
+    linear-gradient(180deg,var(--rojo),var(--negro)),
+    url("https://www.transparenttextures.com/patterns/dark-leather.png");
+  background-blend-mode:overlay;
+  background-size:cover;
+  color:var(--blanco);
 }
 
+/* Header con logo centrado */
 header{
   display:flex;
+  flex-direction:column;
   align-items:center;
-  gap:14px;
-  padding:18px;
-  background:rgba(0,0,0,0.1);
-  border-bottom:1px solid rgba(255,255,255,0.2);
+  justify-content:center;
+  padding:25px 0 10px;
+  text-align:center;
 }
-
 header img{
-  width:120px; /* ← reduce tamaño del logo */
+  width:150px;
   height:auto;
-  border-radius:6px;
+  margin-bottom:10px;
+  border-radius:8px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.4);
+}
+header h1{
+  margin:0;
+  font-size:28px;
+  letter-spacing:1px;
+  font-weight:700;
+  color:var(--oro);
+}
+.subtitle{
+  font-size:14px;
+  color:var(--gris);
 }
 
-.card{
-  background:var(--card);
-  border:1px solid rgba(255,255,255,0.2);
-  border-radius:16px;
-  padding:18px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.3);
+/* Tabs de sucursales */
+.tabs{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:20px 0;
 }
-
 .tab{
   background:rgba(255,255,255,0.1);
+  color:var(--blanco);
   border:1px solid rgba(255,255,255,0.25);
-  color:white;
+  padding:8px 14px;
   border-radius:8px;
-  padding:8px 12px;
   cursor:pointer;
+  font-weight:600;
+  transition:all 0.3s ease;
 }
-
+.tab:hover{
+  background:rgba(255,255,255,0.25);
+}
 .tab.active{
-  background:#ffffff33;
-  font-weight:bold;
+  background:var(--oro);
+  color:#000;
+  border-color:var(--oro);
 }
 
+/* Cards */
+.card{
+  background:rgba(0,0,0,0.4);
+  border:1px solid rgba(255,255,255,0.25);
+  border-radius:16px;
+  padding:20px;
+  margin:20px;
+  box-shadow:0 8px 25px rgba(0,0,0,0.6);
+  backdrop-filter:blur(6px);
+}
+
+/* Botones */
 .btn{
-  background:#ffffff33;
-  border:1px solid white;
-  color:white;
-  padding:8px 12px;
+  background:var(--oro);
+  color:#000;
+  font-weight:700;
+  border:0;
   border-radius:8px;
-  font-weight:bold;
+  padding:8px 14px;
+  cursor:pointer;
+  transition:all 0.3s ease;
 }
-.btn:hover{background:#ffffff55;}
+.btn:hover{
+  background:#fff;
+  color:#000;
+  box-shadow:0 0 10px var(--oro);
+}
 
+/* Formularios y textos */
+input,textarea{
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.25);
+  border-radius:8px;
+  color:var(--blanco);
+  width:100%;
+  padding:8px;
+}
+input::placeholder,textarea::placeholder{color:#bbb;}
+label{font-size:14px;color:var(--gris);}
+
+/* Productos */
+.product{
+  background:rgba(255,255,255,0.1);
+  border-radius:10px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,0.2);
+  transition:transform 0.3s ease,box-shadow 0.3s ease;
+}
+.product:hover{
+  transform:translateY(-3px);
+  box-shadow:0 5px 20px rgba(255,215,0,0.3);
+}
+.product img{width:100%;height:160px;object-fit:cover;}
+.price{color:var(--oro);font-weight:700;margin-top:6px;}
+
+/* Footer */
 footer{
   text-align:center;
   font-size:12px;
-  color:var(--muted);
-  padding:20px 0;
+  padding:15px;
   border-top:1px solid rgba(255,255,255,0.2);
+  color:var(--gris);
 }
 </style>
-
-
-  </style>
-</head>
-<body>
-  <div class="container">
-    <header>
-      <div class="brand">
-        <img src="img/logo_optica_yolanda.png" alt="Óptica Yolanda logo" />
-        <div>
-          <h1>Óptica Yolanda</h1>
-          <div class="subtitle">Elige la sucursal y mira dirección, horarios, WhatsApp y catálogo.</div>
-        </div>
-      </div>
-      <div class="pill">Versión con carga por sucursal</div>
-    </header>
-
-    <div class="tabs" id="tabs"></div>
-
-    <div class="grid">
-      <div class="card">
-        <h3 id="branchTitle">Sucursal</h3>
-        <div class="info">
-          <div>
-            <p class="muted"><span class="i map"></span> <strong>Dirección: </strong><span id="addr">—</span></p>
-            <p class="muted"><span class="i clock"></span> <strong>Horarios: </strong><span id="hours">—</span></p>
-            <div class="actions">
-              <a class="btn primary" id="wapp" target="_blank" rel="noopener"><span class="i phone"></span> WhatsApp</a>
-            </div>
-          </div>
-          <div style="min-height:200px">
-            <div id="mapEmbed" style="height:200px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#7f8ea3;font-size:13px;background:rgba(255,255,255,.02)">Mapa (opcional)</div>
-          </div>
-        </div>
-        <hr style="border:0;border-top:1px solid rgba(255,255,255,.08);margin:16px 0"/>
-        <h3>Productos de la sucursal</h3>
-        <div class="products" id="products"></div>
-        <div class="form-upload">
-          <h4>Agregar producto</h4>
-          <input type="text" id="prodName" placeholder="Nombre del producto" />
-          <input type="text" id="prodPrice" placeholder="Precio (ej: ₲ 250.000)" />
-          <input type="file" id="prodImage" accept="image/*" />
-          <button id="uploadBtn">Cargar producto a esta sucursal</button>
-          <div class="muted" style="font-size:12px">Las imágenes se guardan en el servidor y quedarán visibles para esta sucursal.</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>Contacto rápido</h3>
-        <form id="contactForm">
-          <label>Nombre<br/>
-            <input name="name" required placeholder="Tu nombre" style="width:100%;margin-top:6px;margin-bottom:10px;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:#0e1521;color:var(--text)"/>
-          </label>
-          <label>Mensaje<br/>
-            <textarea name="msg" required rows="4" placeholder="Quiero una cotización para…" style="width:100%;margin-top:6px;margin-bottom:10px;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:#0e1521;color:var(--text)"></textarea>
-          </label>
-          <button class="btn primary" type="submit">Enviar por WhatsApp</button>
-        </form>
-        <hr style="border:0;border-top:1px solid rgba(255,255,255,.08);margin:16px 0"/>
-        <h3>Sobre Óptica Yolanda</h3>
-        <p class="muted">Especialistas en lentes, armazones y contacto. Examen visual y entrega rápida. Calidad al mejor precio.</p>
-      </div>
-    </div>
-
-    <footer>
-      <div>© <span id="year"></span> Óptica Yolanda. Todos los derechos reservados.</div>
-      <div class="muted">Backend Express + Multer para carga por sucursal.</div>
-    </footer>
-  </div>
 
 <script>
 const BRANCHES = [
