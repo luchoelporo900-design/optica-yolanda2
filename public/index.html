@@ -7,49 +7,69 @@
   <meta name="description" content="Catálogo y contactos de Óptica Yolanda. Elige una sucursal para ver dirección, horarios, WhatsApp y productos." />
   <link rel="icon" href="img/logo_optica_yolanda.png" />
   <style>
-    :root{--bg:#0b0f14;--card:#121925;--muted:#a8b3c1;--text:#e8eef6;--brand:#3aa2ff;--accent:#00d1b2;--ring:rgba(58,162,255,.45)}
-    *{box-sizing:border-box}
-    html,body{margin:0;height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
-    body{background:linear-gradient(180deg,#0b0f14,#0e131b 60%,#0b0f14);color:var(--text)}
-    a{color:inherit}
-    .container{max-width:1100px;margin:0 auto;padding:24px}
-    header{display:flex;align-items:center;justify-content:space-between;gap:16px}
-    .brand{display:flex;align-items:center;gap:12px}
-    .brand img{width:44px;height:44px;border-radius:10px;object-fit:cover;box-shadow:0 6px 22px rgba(58,162,255,.35)}
-    h1{font-size:22px;letter-spacing:.4px;margin:0}
-    .subtitle{color:var(--muted);font-size:13px;margin-top:2px}
-    .pill{background:rgba(58,162,255,.12);border:1px solid rgba(58,162,255,.25);padding:8px 12px;border-radius:999px;color:#d9efff;font-size:13px}
-    .tabs{margin:24px 0 12px;display:flex;flex-wrap:wrap;gap:10px}
-    .tab{cursor:pointer;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,#0f1723,#0c121a);color:var(--text);padding:10px 14px;border-radius:12px;font-weight:600;font-size:14px;transition:all .2s ease}
-    .tab:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.18)}
-    .tab.active{background:linear-gradient(180deg,#122034,#0e1a2a);border:1px solid var(--ring);box-shadow:0 0 0 6px rgba(58,162,255,.1)}
-    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
-    @media (max-width:960px){.grid{grid-template-columns:1fr;}}
-    .card{background:linear-gradient(180deg,#0e1622,#0b121c);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
-    .card h3{margin:0 0 12px;font-size:18px}
-    .muted{color:var(--muted)}
-    .info{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    @media (max-width:720px){.info{grid-template-columns:1fr}}
-    .badge{display:inline-flex;align-items:center;gap:8px;font-size:12px;padding:6px 10px;border-radius:999px;background:rgba(0,209,178,.12);border:1px solid rgba(0,209,178,.35);color:#c9fff3}
-    .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
-    .btn{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(180deg,#121a28,#0c141f);font-weight:700;font-size:14px;text-decoration:none}
-    .btn:hover{filter:brightness(1.08)}
-    .btn.primary{border-color:var(--ring)}
-    .products{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    @media (max-width:960px){.products{grid-template-columns:repeat(2,1fr)}}
-    @media (max-width:560px){.products{grid-template-columns:1fr}}
-    .product{background:linear-gradient(180deg,#111a29,#0a111b);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden}
-    .product img{width:100%;height:160px;object-fit:cover;display:block}
-    .product .pbd{padding:12px}
-    .price{font-weight:800;margin-top:4px}
-    footer{margin:26px 0 8px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
-    .i{width:16px;height:16px;border-radius:4px;background:linear-gradient(135deg,var(--accent),#86ffe9)}
-    .i.phone{background:linear-gradient(135deg,#25D366,#86ffd1)}
-    .i.map{background:linear-gradient(135deg,#ff9f43,#ffd08a)}
-    .i.clock{background:linear-gradient(135deg,#3aa2ff,#b9dcff)}
-    .form-upload{margin-top:10px}
-    .form-upload input,.form-upload button{padding:10px;margin:5px 0;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:#0f1723;color:var(--text)}
-    .form-upload button{cursor:pointer;background:#3aa2ff;border:0}
+    :root{
+  --bg:#b30000;        /* rojo principal del fondo */
+  --bg2:#8b0000;       /* rojo oscuro para degradado */
+  --card:#6e0000;      /* rojo más oscuro para tarjetas */
+  --muted:#ffe3e3;     /* texto secundario rosado claro */
+  --text:#ffffff;      /* texto principal blanco */
+  --brand:#ffffff;     /* detalles blancos */
+  --accent:#ffd1d1;    /* acento claro */
+  --ring:rgba(255,255,255,.45);
+}
+
+html,body{margin:0;height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+body{
+  background:linear-gradient(180deg,var(--bg),var(--bg2) 60%,var(--bg));
+  color:var(--text);
+}
+
+/* Tarjetas */
+.card{
+  background:linear-gradient(180deg,var(--card),#5a0000);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:18px;
+  padding:18px;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);
+}
+
+/* Tabs */
+.tab{
+  border:1px solid rgba(255,255,255,.35);
+  background:linear-gradient(180deg,#9b0000,#7f0000);
+  color:var(--text);
+}
+.tab.active{
+  background:linear-gradient(180deg,#b80000,#990000);
+  border:1px solid var(--ring);
+  box-shadow:0 0 0 6px rgba(255,255,255,.12);
+}
+
+/* Botones */
+.btn{
+  border:1px solid rgba(255,255,255,.35);
+  background:linear-gradient(180deg,#a30000,#7a0000);
+  color:#fff;
+}
+.btn:hover{filter:brightness(1.06)}
+.btn.primary{border-color:#fff}
+
+/* Productos */
+.product{
+  background:linear-gradient(180deg,#7a0000,#5a0000);
+  border:1px solid rgba(255,255,255,.22);
+}
+.price{color:#fff}
+
+/* Textos secundarios */
+.muted{color:var(--muted)}
+
+/* Iconitos */
+.i{background:linear-gradient(135deg,#ffd1d1,#fff0f0)}
+.i.phone{background:linear-gradient(135deg,#ffffff,#ffe6e6)}
+.i.map{background:linear-gradient(135deg,#fff,#ffd1d1)}
+.i.clock{background:linear-gradient(135deg,#fff,#ffd1d1)}
+
   </style>
 </head>
 <body>
