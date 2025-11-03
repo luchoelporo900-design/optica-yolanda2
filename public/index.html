@@ -4,173 +4,141 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Óptica Yolanda — 3 Sucursales</title>
-  <meta name="description" content="Catálogo y contactos de Óptica Yolanda. Elige una sucursal para ver dirección, horarios, WhatsApp y productos." />
+  <meta name="description" content="Catálogo y contactos de Óptica Yolanda. Elige la sucursal para ver dirección, horarios, WhatsApp y catálogo." />
   <link rel="icon" href="img/logo_optica_yolanda.png" />
   <style>
- <style>
-:root{
-  --rojo:#8b0000;
-  --negro:#000000;
-  --oro:#ffd700;
-  --blanco:#ffffff;
-  --gris:#cccccc;
-}
+  :root{
+    --rojo:#8b0000;
+    --negro:#000000;
+    --oro:#ffd700;
+    --blanco:#ffffff;
+    --gris:#cccccc;
+  }
+  /* Fondo con degradado + textura sutil */
+  body{
+    margin:0;
+    font-family:"Poppins",system-ui,Segoe UI,Roboto,Ubuntu,Arial;
+    background:
+      linear-gradient(180deg,var(--rojo),var(--negro)),
+      url("https://www.transparenttextures.com/patterns/dark-leather.png");
+    background-blend-mode:overlay;
+    background-size:cover;
+    color:var(--blanco);
+  }
+  .container{max-width:1100px;margin:0 auto;padding:16px}
+  /* Header boutique centrado */
+  header{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:25px 0 10px;text-align:center
+  }
+  header img{width:150px;height:auto;margin-bottom:10px;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+  header h1{margin:0;font-size:28px;letter-spacing:1px;font-weight:700;color:var(--oro)}
+  .subtitle{font-size:14px;color:var(--gris)}
+  .pill{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);padding:6px 10px;border-radius:999px;color:#fff;font-size:12px;margin-top:8px}
+  /* Tabs */
+  .tabs{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin:16px 0}
+  .tab{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);padding:8px 14px;border-radius:10px;cursor:pointer;font-weight:600;transition:all .2s}
+  .tab:hover{background:rgba(255,255,255,.25)}
+  .tab.active{background:var(--oro);color:#000;border-color:var(--oro)}
+  /* Layout */
+  .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
+  @media (max-width:960px){.grid{grid-template-columns:1fr}}
+  /* Cards */
+  .card{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.25);border-radius:16px;padding:18px;margin-bottom:18px;box-shadow:0 8px 25px rgba(0,0,0,.6);backdrop-filter:blur(6px)}
+  .card h3{margin:0 0 10px}
+  .muted{color:var(--gris)}
+  /* Info */
+  .info{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:720px){.info{grid-template-columns:1fr}}
+  /* Botones */
+  .btn{display:inline-flex;align-items:center;gap:8px;background:var(--oro);color:#000;font-weight:700;border:0;border-radius:10px;padding:10px 14px;text-decoration:none;cursor:pointer;transition:all .2s}
+  .btn:hover{background:#fff;box-shadow:0 0 10px var(--oro)}
+  /* Productos */
+  .products{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media (max-width:960px){.products{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:560px){.products{grid-template-columns:1fr}}
+  .product{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:12px;overflow:hidden;transition:transform .2s,box-shadow .2s}
+  .product:hover{transform:translateY(-3px);box-shadow:0 5px 20px rgba(255,215,0,.25)}
+  .product img{width:100%;height:160px;object-fit:cover;display:block}
+  .product .pbd{padding:12px}
+  .price{color:var(--oro);font-weight:800;margin-top:4px}
+  /* Form */
+  .form-upload{margin-top:10px}
+  .form-upload input,.form-upload button{padding:10px;margin:5px 0;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff}
+  .form-upload button{background:var(--oro);color:#000;border:0}
+  input,textarea{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:10px;color:#fff;width:100%;padding:10px}
+  input::placeholder,textarea::placeholder{color:#d6d6d6}
+  /* Footer */
+  footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="img/logo_optica_yolanda.png" alt="Óptica Yolanda" />
+      <h1>Óptica Yolanda</h1>
+      <div class="subtitle">Elige la sucursal y mira dirección, horarios, WhatsApp y catálogo.</div>
+      <div class="pill">Versión con carga por sucursal</div>
+    </header>
 
-/* Fondo general con textura */
-body{
-  margin:0;
-  font-family:"Poppins",sans-serif;
-  background:
-    linear-gradient(180deg,var(--rojo),var(--negro)),
-    url("https://www.transparenttextures.com/patterns/dark-leather.png");
-  background-blend-mode:overlay;
-  background-size:cover;
-  color:var(--blanco);
-}
+    <div class="tabs" id="tabs"></div>
 
-/* Header con logo centrado */
-header{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  padding:25px 0 10px;
-  text-align:center;
-}
-header img{
-  width:150px;
-  height:auto;
-  margin-bottom:10px;
-  border-radius:8px;
-  box-shadow:0 4px 20px rgba(0,0,0,0.4);
-}
-header h1{
-  margin:0;
-  font-size:28px;
-  letter-spacing:1px;
-  font-weight:700;
-  color:var(--oro);
-}
-.subtitle{
-  font-size:14px;
-  color:var(--gris);
-}
+    <div class="grid">
+      <div class="card">
+        <h3 id="branchTitle">Sucursal</h3>
+        <div class="info">
+          <div>
+            <p class="muted"><strong>Dirección: </strong><span id="addr">—</span></p>
+            <p class="muted"><strong>Horarios: </strong><span id="hours">—</span></p>
+            <div class="actions">
+              <a class="btn" id="wapp" target="_blank" rel="noopener">WhatsApp</a>
+            </div>
+          </div>
+          <div style="min-height:200px">
+            <div id="mapEmbed" style="height:200px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;color:#eee;font-size:13px;background:rgba(255,255,255,.05)">Mapa (opcional)</div>
+          </div>
+        </div>
+        <hr style="border:0;border-top:1px solid rgba(255,255,255,.2);margin:16px 0"/>
+        <h3>Productos de la sucursal</h3>
+        <div class="products" id="products"></div>
+        <div class="form-upload">
+          <h4>Agregar producto</h4>
+          <input type="text" id="prodName" placeholder="Nombre del producto" />
+          <input type="text" id="prodPrice" placeholder="Precio (ej: ₲ 250.000)" />
+          <input type="file" id="prodImage" accept="image/*" />
+          <button id="uploadBtn">Cargar producto a esta sucursal</button>
+          <div class="muted" style="font-size:12px">Las imágenes se guardan en el servidor y quedarán visibles para esta sucursal.</div>
+        </div>
+      </div>
 
-/* Tabs de sucursales */
-.tabs{
-  display:flex;
-  justify-content:center;
-  flex-wrap:wrap;
-  gap:10px;
-  margin:20px 0;
-}
-.tab{
-  background:rgba(255,255,255,0.1);
-  color:var(--blanco);
-  border:1px solid rgba(255,255,255,0.25);
-  padding:8px 14px;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:600;
-  transition:all 0.3s ease;
-}
-.tab:hover{
-  background:rgba(255,255,255,0.25);
-}
-.tab.active{
-  background:var(--oro);
-  color:#000;
-  border-color:var(--oro);
-}
+      <div class="card">
+        <h3>Contacto rápido</h3>
+        <form id="contactForm">
+          <label>Nombre<br/>
+            <input name="name" required placeholder="Tu nombre" />
+          </label>
+          <label>Mensaje<br/>
+            <textarea name="msg" required rows="4" placeholder="Quiero una cotización para…"></textarea>
+          </label>
+          <button class="btn" type="submit">Enviar por WhatsApp</button>
+        </form>
+        <hr style="border:0;border-top:1px solid rgba(255,255,255,.2);margin:16px 0"/>
+        <h3>Sobre Óptica Yolanda</h3>
+        <p class="muted">Especialistas en lentes, armazones y contacto. Examen visual y entrega rápida. Calidad al mejor precio.</p>
+      </div>
+    </div>
 
-/* Cards */
-.card{
-  background:rgba(0,0,0,0.4);
-  border:1px solid rgba(255,255,255,0.25);
-  border-radius:16px;
-  padding:20px;
-  margin:20px;
-  box-shadow:0 8px 25px rgba(0,0,0,0.6);
-  backdrop-filter:blur(6px);
-}
-
-/* Botones */
-.btn{
-  background:var(--oro);
-  color:#000;
-  font-weight:700;
-  border:0;
-  border-radius:8px;
-  padding:8px 14px;
-  cursor:pointer;
-  transition:all 0.3s ease;
-}
-.btn:hover{
-  background:#fff;
-  color:#000;
-  box-shadow:0 0 10px var(--oro);
-}
-
-/* Formularios y textos */
-input,textarea{
-  background:rgba(255,255,255,0.1);
-  border:1px solid rgba(255,255,255,0.25);
-  border-radius:8px;
-  color:var(--blanco);
-  width:100%;
-  padding:8px;
-}
-input::placeholder,textarea::placeholder{color:#bbb;}
-label{font-size:14px;color:var(--gris);}
-
-/* Productos */
-.product{
-  background:rgba(255,255,255,0.1);
-  border-radius:10px;
-  overflow:hidden;
-  border:1px solid rgba(255,255,255,0.2);
-  transition:transform 0.3s ease,box-shadow 0.3s ease;
-}
-.product:hover{
-  transform:translateY(-3px);
-  box-shadow:0 5px 20px rgba(255,215,0,0.3);
-}
-.product img{width:100%;height:160px;object-fit:cover;}
-.price{color:var(--oro);font-weight:700;margin-top:6px;}
-
-/* Footer */
-footer{
-  text-align:center;
-  font-size:12px;
-  padding:15px;
-  border-top:1px solid rgba(255,255,255,0.2);
-  color:var(--gris);
-}
-</style>
+    <footer>
+      <div>© <span id="year"></span> Óptica Yolanda. Todos los derechos reservados.</div>
+      <div class="muted">Backend Express + Multer para carga por sucursal.</div>
+    </footer>
+  </div>
 
 <script>
 const BRANCHES = [
-  {
-    id:'central',
-    nombre:'Óptica Yolanda Central',
-    direccion:'Azara 1167 casi Brasil',
-    horarios:'08:00 a 18:00',
-    whatsapp:'595986315354'
-  },
-  {
-    id:'fernando',
-    nombre:'Óptica Yolanda Fernando de la Mora',
-    direccion:'Ruta Mcal. José Estigarribia esquina 15 de Mayo',
-    horarios:'08:00 a 18:00',
-    whatsapp:'595983989860'
-  },
-  {
-    id:'caacupe',
-    nombre:'Óptica Yolanda Caacupé',
-    direccion:'Ruta del Maestro 1807 esquina Independencia Nacional',
-    horarios:'08:00 a 18:00',
-    whatsapp:'595972760646'
-  }
+  { id:'central',  nombre:'Óptica Yolanda Central',  direccion:'Azara 1167 casi Brasil', horarios:'08:00 a 18:00', whatsapp:'595986315354' },
+  { id:'fernando', nombre:'Óptica Yolanda Fernando de la Mora', direccion:'Ruta Mcal. José Estigarribia esquina 15 de Mayo', horarios:'08:00 a 18:00', whatsapp:'595983989860' },
+  { id:'caacupe',  nombre:'Óptica Yolanda Caacupé', direccion:'Ruta del Maestro 1807 esquina Independencia Nacional', horarios:'08:00 a 18:00', whatsapp:'595972760646' }
 ];
 
 const tabsEl = document.getElementById('tabs');
@@ -187,7 +155,7 @@ function renderTabs(){
   tabsEl.innerHTML = '';
   BRANCHES.forEach(b => {
     const btn = document.createElement('button');
-    btn.className = 'tab' + (b.id===current?' active':'')
+    btn.className = 'tab' + (b.id===current?' active':'');
     btn.textContent = b.nombre;
     btn.onclick = () => { current = b.id; renderBranch(); };
     tabsEl.appendChild(btn);
@@ -195,9 +163,11 @@ function renderTabs(){
 }
 
 async function fetchProductos(){
-  const r = await fetch(`/productos/${current}`);
-  if(!r.ok){ return []; }
-  return await r.json();
+  try{
+    const r = await fetch(`/productos/${current}`);
+    if(!r.ok) return {productos:[]};
+    return await r.json();
+  }catch(e){ return {productos:[]} }
 }
 
 async function renderBranch(){
@@ -209,7 +179,7 @@ async function renderBranch(){
   wapp.href = `https://wa.me/${b.whatsapp}`;
 
   productsEl.innerHTML = '';
-  const data = await fetchProductos(); // {productos:[]}
+  const data = await fetchProductos();
   (data.productos||[]).forEach(p => {
     const card = document.createElement('div');
     card.className = 'product';
@@ -243,8 +213,14 @@ uploadBtn.addEventListener('click', async ()=>{
   fd.append('precio', price);
   fd.append('imagen', file);
   const r = await fetch(`/upload/${current}`, { method:'POST', body: fd });
-  if(r.ok){ document.getElementById('prodName').value=''; document.getElementById('prodPrice').value=''; document.getElementById('prodImage').value=''; renderBranch(); }
-  else { alert('No se pudo subir.'); }
+  if(r.ok){
+    document.getElementById('prodName').value='';
+    document.getElementById('prodPrice').value='';
+    document.getElementById('prodImage').value='';
+    renderBranch();
+  }else{
+    alert('No se pudo subir.');
+  }
 });
 
 document.getElementById('year').textContent = new Date().getFullYear();
