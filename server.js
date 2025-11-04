@@ -48,7 +48,7 @@ const readJson = (s) => JSON.parse(fs.readFileSync(jf(s), "utf-8"));
 const writeJson = (s, d) => fs.writeFileSync(jf(s), JSON.stringify(d, null, 2), "utf-8");
 const absFromRel = (rel) => path.join(__dirname, "public", rel.replace(/^\//, ""));
 
-// Middleware admin
+// Admin middleware
 function checkAdmin(req, res, next) {
   const k = req.headers["x-admin-key"];
   if (!k || k !== ADMIN_KEY) return res.status(401).send("Admin requerido");
@@ -64,20 +64,19 @@ app.get("/productos/:sucursal", (req, res) => {
   res.json(readJson(suc));
 });
 
-// Alta (con código) — solo admin
+// Alta (con código, categoría, oferta opcional) — admin
 app.post("/upload/:sucursal", checkAdmin, upload.single("imagen"), (req, res) => {
   const suc = req.params.sucursal;
   if (!SUCURSALES.has(suc)) return res.status(400).json({ error: "Sucursal inválida" });
   if (!req.file) return res.status(400).json({ error: "Falta imagen" });
 
-  const { nombre, precio, categoria, codigo } = req.body;
+  const { nombre, precio, categoria, codigo, oferta, precioPromo } = req.body;
   if (!nombre || !precio || !categoria || !codigo) {
     return res.status(400).json({ error: "Faltan datos (nombre, precio, categoría, código)" });
   }
 
   const data = readJson(suc);
   if (data.productos.some(p => (p.codigo || "").toLowerCase() === codigo.toLowerCase())) {
-    // eliminar imagen subida si hay conflicto
     try { fs.unlinkSync(absFromRel(`/uploads/${suc}/${req.file.filename}`)); } catch {}
     return res.status(409).json({ error: "Código ya existente en esta sucursal" });
   }
@@ -89,6 +88,8 @@ app.post("/upload/:sucursal", checkAdmin, upload.single("imagen"), (req, res) =>
     nombre,
     precio,
     categoria,
+    oferta: oferta === "true" || oferta === true,
+    precioPromo: precioPromo || "",
     img: `/uploads/${suc}/${req.file.filename}`,
     ts: Date.now()
   };
@@ -97,7 +98,7 @@ app.post("/upload/:sucursal", checkAdmin, upload.single("imagen"), (req, res) =>
   res.json({ ok: true, producto: prod });
 });
 
-// Edición (con o sin nueva imagen) — solo admin
+// Edición — admin
 app.put("/producto/:sucursal/:id", checkAdmin, upload.single("imagen"), (req, res) => {
   const { sucursal, id } = req.params;
   if (!SUCURSALES.has(sucursal)) return res.status(400).json({ error: "Sucursal inválida" });
@@ -107,7 +108,7 @@ app.put("/producto/:sucursal/:id", checkAdmin, upload.single("imagen"), (req, re
   if (idx === -1) return res.status(404).json({ error: "Producto no encontrado" });
 
   const p = data.productos[idx];
-  const { nombre, precio, categoria, codigo } = req.body;
+  const { nombre, precio, categoria, codigo, oferta, precioPromo } = req.body;
 
   if (codigo && codigo !== p.codigo) {
     if (data.productos.some(x => x.id !== id && (x.codigo || "").toLowerCase() === codigo.toLowerCase())) {
@@ -118,6 +119,13 @@ app.put("/producto/:sucursal/:id", checkAdmin, upload.single("imagen"), (req, re
   if (nombre) p.nombre = nombre;
   if (precio) p.precio = precio;
   if (categoria) p.categoria = categoria;
+
+  if (typeof oferta !== "undefined") {
+    p.oferta = (oferta === "true" || oferta === true || oferta === "on");
+  }
+  if (typeof precioPromo !== "undefined") {
+    p.precioPromo = precioPromo;
+  }
 
   if (req.file) {
     try { fs.unlinkSync(absFromRel(p.img)); } catch {}
@@ -130,7 +138,7 @@ app.put("/producto/:sucursal/:id", checkAdmin, upload.single("imagen"), (req, re
   res.json({ ok: true, producto: p });
 });
 
-// Borrado — solo admin
+// Borrado — admin
 app.delete("/producto/:sucursal/:id", checkAdmin, (req, res) => {
   const { sucursal, id } = req.params;
   if (!SUCURSALES.has(sucursal)) return res.status(400).json({ error: "Sucursal inválida" });
@@ -158,10 +166,12 @@ app.get("/export/:sucursal.csv", (req, res) => {
       nombre: p.nombre || "",
       precio: (p.precio || "").toString().replace(/\n/g, " "),
       categoria: p.categoria || "",
+      oferta: p.oferta ? "1" : "0",
+      precio_promo: (p.precioPromo || "").toString().replace(/\n/g, " "),
       imagen: p.img || ""
     }));
 
-  const header = ["codigo","nombre","precio","categoria","imagen"];
+  const header = ["codigo","nombre","precio","categoria","oferta","precio_promo","imagen"];
   const csv = [
     header.join(","),
     ...rows.map(r => header.map(h => {
@@ -181,6 +191,13 @@ app.get("/export/:sucursal.json", (req, res) => {
   const suc = req.params.sucursal;
   if (!SUCURSALES.has(suc)) return res.status(400).send("Sucursal inválida");
   res.json(readJson(suc));
+});
+
+// Debug opcional
+app.get("/debug/files/:sucursal", (req, res) => {
+  const dir = path.join(UP_DIR, req.params.sucursal);
+  try { res.json({ dir, files: fs.readdirSync(dir) }); }
+  catch(e){ res.status(500).json({ dir, error: e.message }); }
 });
 
 // SPA
