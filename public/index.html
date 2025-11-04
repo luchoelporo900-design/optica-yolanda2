@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
-<head><meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-
+<head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Óptica Yolanda — 3 Sucursales</title>
@@ -124,23 +121,7 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
 .vendor-list{display:flex;flex-direction:column;gap:10px;margin-top:8px}
 .vendor-btn{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#1a1a1a;border:1px solid rgba(255,255,255,.25);border-radius:10px;padding:10px 12px;cursor:pointer}
 .vendor-btn:hover{filter:brightness(1.05)}
-.vendor-phone{opacity:.8;font-size:12px}/* === Modal Zoom de imagen === */
-#zoomModal{
-  display:none; position:fixed; inset:0; z-index:9999;
-  background:rgba(0,0,0,.85); align-items:center; justify-content:center;
-}
-#zoomModal.open{ display:flex; }
-#zoomModal img{
-  max-width:92vw; max-height:85vh; border-radius:12px;
-  box-shadow:0 0 30px rgba(0,0,0,.6);
-}
-#zoomModal .zoom-close{
-  position:absolute; top:16px; right:20px;
-  background:#ff4040; color:#fff; border:none; cursor:pointer;
-  font-weight:800; font-size:20px; border-radius:8px; padding:6px 12px;
-}
-#zoomModal .zoom-close:hover{ filter:brightness(1.1); }
-
+.vendor-phone{opacity:.8;font-size:12px}
 </style>
 </head>
 <body>
@@ -149,11 +130,6 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
     <img src="img/logo_optica_yolanda.png" alt="Óptica Yolanda" />
     <h1>Óptica Yolanda</h1>
     <div class="subtitle">Elige la sucursal y mira dirección, horarios, WhatsApp y catálogo.</div>
-<!-- Modal de imagen ampliada -->
-<div id="zoomModal" aria-hidden="true">
-  <button id="zoomClose" class="zoom-close" type="button">× Cerrar</button>
-  <img id="zoomImg" alt="Vista ampliada" />
-</div>
 
     <div class="top-actions">
       <button id="adminBtn" class="btn" type="button">Administrador</button>
@@ -296,12 +272,10 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
     </div>
   </div>
 
- <footer>
-  <div style="text-align:center;width:100%;font-weight:600;color:#fff;">
-    ÓPTICA YOLANDA – PY
-  </div>
-</footer>
-
+  <footer>
+    <div>© <span id="year"></span> Óptica Yolanda. Todos los derechos reservados.</div>
+    <div class="muted">Express + Multer • Admin con ofertas, favoritos, selector de vendedora, mapas.</div>
+  </footer>
 </div>
 
 <script>
@@ -315,8 +289,7 @@ const BRANCHES = [
     mapQuery:'Federación de Químicos del Paraguay, Azara 1175, Asunción 001220',
     vendors:[
       { name:'Dahiana', phone:'+595986315354' },
-     { name:'Belén',   phone:'+595991675556' }
-
+      { name:'Belén',   phone:'+59591675556' }
     ]
   },
   {
@@ -751,23 +724,6 @@ async function delProduct(p){
 document.getElementById('year').textContent = new Date().getFullYear();
 updateFavCounter();
 renderBranch();
-</script><script>
-// Zoom de imagen con delegación en el contenedor de productos
-const zoomModal = document.getElementById('zoomModal');
-const zoomImg   = document.getElementById('zoomImg');
-const zoomClose = document.getElementById('zoomClose');
-
-document.getElementById('products').addEventListener('click', (e)=>{
-  const img = e.target.closest('.product img');
-  if(!img) return;
-  zoomImg.src = img.src;
-  zoomModal.classList.add('open');
-});
-
-zoomClose.addEventListener('click', ()=> zoomModal.classList.remove('open'));
-zoomModal.addEventListener('click', (e)=>{ if(e.target === zoomModal) zoomModal.classList.remove('open'); });
-window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') zoomModal.classList.remove('open'); });
 </script>
-
 </body>
 </html>
