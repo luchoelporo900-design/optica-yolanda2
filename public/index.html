@@ -199,6 +199,29 @@ header img::after{
   50% { top: -50%; left: 100%; }
   100% { top: 120%; left: 200%; }
 }
+/* ==== Pestañas de categorías ==== */
+.category-tabs{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:10px 0 20px;
+}
+.cat-tab{
+  background:rgba(255,255,255,0.1);
+  color:#fff;
+  border:1px solid rgba(255,255,255,0.25);
+  border-radius:8px;
+  padding:8px 14px;
+  cursor:pointer;
+  transition:all 0.3s ease;
+}
+.cat-tab:hover{background:rgba(255,255,255,0.25);}
+.cat-tab.active{
+  background:var(--oro2);
+  color:#000;
+  border-color:var(--oro2);
+}
   </style>
 </head>
 <body>
@@ -207,8 +230,7 @@ header img::after{
       <img src="img/logo_optica_yolanda.png" alt="Óptica Yolanda" />
       <h1>Óptica Yolanda</h1>
       <div class="subtitle">Elige la sucursal y mira dirección, horarios, WhatsApp y catálogo.</div>
-      <div class="pill">Versión con carga por sucursal</div>
-    </header>
+         </header>
 
     <div class="tabs" id="tabs"></div>
 
@@ -228,8 +250,15 @@ header img::after{
           </div>
         </div>
         <hr style="border:0;border-top:1px solid rgba(255,255,255,.2);margin:16px 0"/>
-        <h3>Productos de la sucursal</h3>
-        <div class="products" id="products"></div>
+        <h3>Catálogo por categoría</h3>
+<div class="category-tabs">
+  <button class="cat-tab active" data-cat="dama">Dama</button>
+  <button class="cat-tab" data-cat="caballero">Caballero</button>
+  <button class="cat-tab" data-cat="ninos">Niños</button>
+  <button class="cat-tab" data-cat="solares">Solares</button>
+</div>
+<div class="products" id="products"></div>
+
         <div class="form-upload">
           <h4>Agregar producto</h4>
           <input type="text" id="prodName" placeholder="Nombre del producto" />
@@ -264,6 +293,18 @@ header img::after{
   </div>
 
 <script>
+// filtro de categorías
+const categoryTabs = document.querySelectorAll('.cat-tab');
+let currentCat = 'dama';
+categoryTabs.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    categoryTabs.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentCat = btn.dataset.cat;
+    renderBranch(); // recarga productos filtrando
+  });
+});
+</script>
 const BRANCHES = [
   { id:'central',  nombre:'Óptica Yolanda Central',  direccion:'Azara 1167 casi Brasil', horarios:'08:00 a 18:00', whatsapp:'595986315354' },
   { id:'fernando', nombre:'Óptica Yolanda Fernando de la Mora', direccion:'Ruta Mcal. José Estigarribia esquina 15 de Mayo', horarios:'08:00 a 18:00', whatsapp:'595983989860' },
