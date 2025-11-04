@@ -159,6 +159,46 @@ header::after{
 @media (prefers-reduced-motion: reduce){
   header h1{ animation: none; background-position: 50% 0; }
 }
+/* ==== Efecto brillante tipo vidrio en el logo ==== */
+header img{
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+header img:hover{
+  transform: scale(1.03);
+  box-shadow: 0 6px 25px rgba(255,215,0,0.4);
+}
+
+/* Reflejo móvil */
+header img::after{
+  content: "";
+  position: absolute;
+  top: -100%;
+  left: -75%;
+  width: 50%;
+  height: 300%;
+  background: linear-gradient(
+    120deg,
+    rgba(255,255,255,0.05) 0%,
+    rgba(255,255,255,0.3) 50%,
+    rgba(255,255,255,0.05) 100%
+  );
+  transform: skewX(-25deg);
+  animation: shineMove 6s ease-in-out infinite;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* Animación del reflejo */
+@keyframes shineMove {
+  0% { top: -120%; left: -75%; }
+  50% { top: -50%; left: 100%; }
+  100% { top: 120%; left: 200%; }
+}
   </style>
 </head>
 <body>
