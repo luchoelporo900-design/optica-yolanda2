@@ -15,24 +15,24 @@ app.use(express.urlencoded({ extended: true }));
 
 // === CONFIG ===
 const DATA_DIR = path.join(__dirname, "data");
-const UP_DIR = path.join(__dirname, "public", "uploads");
+const UP_DIR   = path.join(__dirname, "public", "uploads");
 const SUCURSALES = new Set(["central", "fernando", "caacupe"]);
-const ADMIN_KEY = process.env.ADMIN_KEY || "yolanda2025";
+const ADMIN_KEY  = process.env.ADMIN_KEY || "yolanda2025"; // cámbialo en Render si quieres
 
-// Static
+// Archivos estáticos
 app.use(express.static(path.join(__dirname, "public")));
 
 // Asegurar carpetas y JSON iniciales
 for (const s of SUCURSALES) {
   fs.mkdirSync(path.join(UP_DIR, s), { recursive: true });
+  fs.mkdirSync(DATA_DIR, { recursive: true });
   const jf = path.join(DATA_DIR, `${s}.json`);
   if (!fs.existsSync(jf)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
     fs.writeFileSync(jf, JSON.stringify({ productos: [] }, null, 2), "utf-8");
   }
 }
 
-// Multer
+// Multer (subidas)
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, path.join(UP_DIR, req.params.sucursal)),
   filename: (req, file, cb) => {
@@ -55,16 +55,16 @@ function checkAdmin(req, res, next) {
   next();
 }
 
-// === RUTAS ===
+// === RUTAS API ===
 
-// Listado por sucursal
+// Obtener catálogo por sucursal
 app.get("/productos/:sucursal", (req, res) => {
   const suc = req.params.sucursal;
   if (!SUCURSALES.has(suc)) return res.status(400).json({ error: "Sucursal inválida" });
   res.json(readJson(suc));
 });
 
-// Alta (con código, categoría, oferta opcional) — admin
+// Crear producto (admin)
 app.post("/upload/:sucursal", checkAdmin, upload.single("imagen"), (req, res) => {
   const suc = req.params.sucursal;
   if (!SUCURSALES.has(suc)) return res.status(400).json({ error: "Sucursal inválida" });
@@ -72,33 +72,35 @@ app.post("/upload/:sucursal", checkAdmin, upload.single("imagen"), (req, res) =>
 
   const { nombre, precio, categoria, codigo, oferta, precioPromo } = req.body;
   if (!nombre || !precio || !categoria || !codigo) {
+    try { fs.unlinkSync(absFromRel(`/uploads/${suc}/${req.file.filename}`)); } catch {}
     return res.status(400).json({ error: "Faltan datos (nombre, precio, categoría, código)" });
   }
 
   const data = readJson(suc);
   if (data.productos.some(p => (p.codigo || "").toLowerCase() === codigo.toLowerCase())) {
     try { fs.unlinkSync(absFromRel(`/uploads/${suc}/${req.file.filename}`)); } catch {}
-    return res.status(409).json({ error: "Código ya existente en esta sucursal" });
+    return res.status(409).json({ error: "Código ya existente" });
   }
 
-  const id = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  const id = `${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
   const prod = {
     id,
     codigo,
     nombre,
     precio,
     categoria,
-    oferta: oferta === "true" || oferta === true,
+    oferta: oferta === "true" || oferta === true || oferta === "on",
     precioPromo: precioPromo || "",
     img: `/uploads/${suc}/${req.file.filename}`,
     ts: Date.now()
   };
+
   data.productos.push(prod);
   writeJson(suc, data);
   res.json({ ok: true, producto: prod });
 });
 
-// Edición — admin
+// Editar producto (admin)
 app.put("/producto/:sucursal/:id", checkAdmin, upload.single("imagen"), (req, res) => {
   const { sucursal, id } = req.params;
   if (!SUCURSALES.has(sucursal)) return res.status(400).json({ error: "Sucursal inválida" });
@@ -131,14 +133,14 @@ app.put("/producto/:sucursal/:id", checkAdmin, upload.single("imagen"), (req, re
     try { fs.unlinkSync(absFromRel(p.img)); } catch {}
     p.img = `/uploads/${sucursal}/${req.file.filename}`;
   }
-
   p.ts = Date.now();
+
   data.productos[idx] = p;
   writeJson(sucursal, data);
   res.json({ ok: true, producto: p });
 });
 
-// Borrado — admin
+// Eliminar producto (admin)
 app.delete("/producto/:sucursal/:id", checkAdmin, (req, res) => {
   const { sucursal, id } = req.params;
   if (!SUCURSALES.has(sucursal)) return res.status(400).json({ error: "Sucursal inválida" });
@@ -153,11 +155,11 @@ app.delete("/producto/:sucursal/:id", checkAdmin, (req, res) => {
   res.json({ ok: true, removed });
 });
 
-// === EXPORT CSV / JSON ===
+// Exportar CSV / JSON
 app.get("/export/:sucursal.csv", (req, res) => {
   const suc = req.params.sucursal;
   if (!SUCURSALES.has(suc)) return res.status(400).send("Sucursal inválida");
-  const { cat } = req.query; // ?cat=dama (opcional)
+  const { cat } = req.query;
   const data = readJson(suc);
   const rows = (data.productos || [])
     .filter(p => !cat || p.categoria === cat)
