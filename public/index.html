@@ -70,6 +70,95 @@
   input::placeholder,textarea::placeholder{color:#d6d6d6}
   /* Footer */
   footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+/* ==== Oro metálico premium + brillo sutil ==== */
+:root{
+  --oro1:#fff2a6;   /* luz */
+  --oro2:#ffd34d;   /* medio */
+  --oro3:#caa231;   /* sombra */
+  --oro4:#8f6b00;   /* sombra profunda */
+}
+
+/* Título con degradado metálico animado */
+header h1{
+  background: linear-gradient(
+    135deg,
+    var(--oro1) 0%,
+    var(--oro2) 30%,
+    var(--oro3) 55%,
+    var(--oro1) 70%,
+    var(--oro4) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  background-size: 200% 100%;
+  animation: goldSparkle 6s linear infinite;
+  text-shadow: 0 1px 1px rgba(0,0,0,.35);
+}
+
+/* Línea delicada bajo el header para sensación “joyería” */
+header{ border-bottom: 1px solid rgba(255,255,255,.18); }
+header::after{
+  content:"";
+  display:block;
+  height:1px;
+  width:120px;
+  margin:10px auto 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.7), transparent);
+  opacity:.6;
+}
+
+/* Tabs activas con oro metálico */
+.tab.active{
+  background: linear-gradient(135deg, var(--oro1), var(--oro2) 40%, var(--oro3));
+  color:#201a00;
+  border-color: rgba(255,255,255,.6);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.35) inset, 0 6px 18px rgba(255,215,0,.25);
+}
+
+/* Botones con borde metálico y brillo suave */
+.btn{
+  position: relative;
+  background: linear-gradient(180deg, var(--oro2), var(--oro3));
+  color:#201a00;
+  border:1px solid rgba(255,255,255,.65);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.4) inset,
+    0 -1px 0 rgba(0,0,0,.25) inset,
+    0 8px 20px rgba(255,215,0,.25);
+}
+.btn:hover{
+  filter: brightness(1.05);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.6) inset,
+    0 -1px 0 rgba(0,0,0,.3) inset,
+    0 10px 26px rgba(255,215,0,.35);
+}
+
+/* Precios resaltados con oro */
+.price{
+  color: var(--oro2);
+  text-shadow: 0 1px 0 rgba(0,0,0,.35);
+  font-weight: 800;
+}
+
+/* Tarjetas: borde fino “cromado” */
+.card{
+  border: 1px solid rgba(255,255,255,.28);
+  box-shadow: 0 10px 28px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.06) inset;
+}
+
+/* Animación del brillo en el texto dorado */
+@keyframes goldSparkle{
+  0%   { background-position: 0% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Respeta usuarios con reducción de movimiento */
+@media (prefers-reduced-motion: reduce){
+  header h1{ animation: none; background-position: 50% 0; }
+}
   </style>
 </head>
 <body>
