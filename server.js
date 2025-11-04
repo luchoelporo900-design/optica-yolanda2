@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 const DATA_DIR = path.join(__dirname, "data");
 const UP_DIR   = path.join(__dirname, "public", "uploads");
 const SUCURSALES = new Set(["central", "fernando", "caacupe"]);
-const ADMIN_KEY  = process.env.ADMIN_KEY || "yolanda2025"; // cámbialo en Render si quieres
+const ADMIN_KEY  = process.env.ADMIN_KEY || "yolanda2025"; // cambia en Render si quieres
 
 // Archivos estáticos
 app.use(express.static(path.join(__dirname, "public")));
