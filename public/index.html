@@ -276,16 +276,37 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
 
   <footer>
     <div>© <span id="year"></span> Óptica Yolanda. Todos los derechos reservados.</div>
-    <div class="muted">Express + Multer • Admin con edición, ofertas, export y favoritos.</div>
+    <div class="muted">Express + Multer • Admin con ofertas, favoritos, export y mapas.</div>
   </footer>
 </div>
 
 <script>
-// ===== Datos de sucursales
+// ===== Datos de sucursales con mapQuery
 const BRANCHES = [
-  { id:'central',  nombre:'Óptica Yolanda Central',  direccion:'Azara 1167 casi Brasil', horarios:'08:00 a 18:00', whatsapp:'595986315354' },
-  { id:'fernando', nombre:'Óptica Yolanda Fernando de la Mora', direccion:'Ruta Mcal. José Estigarribia esquina 15 de Mayo', horarios:'08:00 a 18:00', whatsapp:'595983989860' },
-  { id:'caacupe',  nombre:'Óptica Yolanda Caacupé', direccion:'Ruta del Maestro 1807 esquina Independencia Nacional', horarios:'08:00 a 18:00', whatsapp:'595972760646' }
+  {
+    id:'central',
+    nombre:'Óptica Yolanda Central',
+    direccion:'Azara 1167 casi Brasil',
+    horarios:'08:00 a 18:00',
+    whatsapp:'595986315354',
+    mapQuery:'Federación de Químicos del Paraguay, Azara 1175, Asunción 001220'
+  },
+  {
+    id:'fernando',
+    nombre:'Óptica Yolanda Fernando de la Mora',
+    direccion:'Ruta Mcal. José Estigarribia esquina 15 de Mayo',
+    horarios:'08:00 a 18:00',
+    whatsapp:'595983989860',
+    mapQuery:'Ruta Mariscal José Felix Estigarribia, Fernando de la Mora'
+  },
+  {
+    id:'caacupe',
+    nombre:'Óptica Yolanda Caacupé',
+    direccion:'Ruta del Maestro 1807 esquina Independencia Nacional',
+    horarios:'08:00 a 18:00',
+    whatsapp:'595972760646',
+    mapQuery:'Caacupé 030102'
+  }
 ];
 
 const CATS = ["dama","caballero","clipon_dama","clipon_caballero","ninos","solares"];
@@ -458,15 +479,39 @@ async function renderBranch(){
   hours.textContent = b.horarios;
   wapp.href = `https://wa.me/${b.whatsapp}`;
 
+  // Mapa embebido + botones (usa mapQuery o lat/lng)
+  const mapDiv = document.getElementById('mapEmbed');
+  let q = null;
+  if (b.mapQuery) {
+    q = encodeURIComponent(b.mapQuery);
+  } else if (typeof b.lat === 'number' && typeof b.lng === 'number') {
+    q = encodeURIComponent(`${b.lat},${b.lng}`);
+  }
+  if (q) {
+    mapDiv.innerHTML = `
+      <iframe
+        src="https://www.google.com/maps?q=${q}&z=16&output=embed"
+        width="100%" height="200" style="border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <a class="btn" href="https://www.google.com/maps/dir/?api=1&destination=${q}" target="_blank" rel="noopener">Cómo llegar</a>
+        <a class="btn" href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" rel="noopener">Ver en Google Maps</a>
+      </div>
+    `;
+  } else {
+    mapDiv.textContent = "Mapa no disponible";
+  }
+
+  // Catálogo
   productsEl.innerHTML = '';
   const data = await fetchProductos();
   productosCache = data.productos || [];
 
-  const q = (searchCode.value || '').trim().toLowerCase();
+  const qSearch = (searchCode.value || '').trim().toLowerCase();
 
   function renderList(list){
     list
-      .filter(p => !q || (p.codigo || '').toLowerCase().includes(q))
+      .filter(p => !qSearch || (p.codigo || '').toLowerCase().includes(qSearch))
       .forEach(p => productsEl.appendChild(productCard(p)));
   }
 
