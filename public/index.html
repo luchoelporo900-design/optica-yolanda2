@@ -9,7 +9,7 @@
 :root{
   --rojo:#8b0000; --negro:#000; --blanco:#fff; --gris:#ccc;
   --oro:#ffd700; --oro1:#fff2a6; --oro2:#ffd34d; --oro3:#caa231; --oro4:#8f6b00;
-  --green:#22c55e; --danger:#ff4040;
+  --green:#22c55e; --orange:#f59e0b; --red:#ef4444; --danger:#ff4040;
 }
 *{box-sizing:border-box}
 body{
@@ -85,7 +85,10 @@ header h1{
 .price{color:var(--oro2);font-weight:800;margin-top:4px;text-shadow:0 1px 0 rgba(0,0,0,.35)}
 .price-old{opacity:.7;text-decoration:line-through;margin-right:6px}
 .badge-offer{position:absolute;top:8px;left:8px;background:var(--danger);color:#fff;padding:4px 8px;border-radius:8px;font-size:12px;font-weight:800;box-shadow:0 2px 8px rgba(0,0,0,.35)}
-.badge-discount{position:absolute;top:8px;right:8px;background:var(--green);color:#08210f;font-weight:900;font-size:12px;padding:4px 8px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.badge-discount{position:absolute;top:8px;right:8px;color:#08210f;font-weight:900;font-size:12px;padding:4px 8px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.badge-discount.disc-10{background:var(--green)}
+.badge-discount.disc-20{background:var(--orange)}
+.badge-discount.disc-30{background:var(--red)}
 .actions-admin{position:absolute;top:8px;right:8px;display:none;gap:6px}
 .actions-admin .small{font-size:12px;padding:6px 8px;border-radius:8px}
 
@@ -97,16 +100,6 @@ header h1{
 .fav-btn.active{background:#ff4d7e;border-color:#ff4d7e}
 .fav-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between;margin:8px 0 6px}
 .fav-counter{background:#ff4d7e;color:#fff;border-radius:999px;padding:6px 10px;font-weight:800}
-
-/* Form */
-.form-upload{margin-top:10px}
-.form-upload input,.form-upload select,.form-upload button,.form-upload label{
-  padding:10px;margin:5px 0;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff
-}
-.form-upload .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.form-upload button{background:linear-gradient(180deg,var(--oro2),var(--oro3));color:#201a00;border:1px solid rgba(255,255,255,.65)}
-input,textarea{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:10px;color:#fff;width:100%;padding:10px}
-input::placeholder,textarea::placeholder{color:#d6d6d6}
 
 /* Section headers in "Todos" */
 .cat-header{
@@ -123,8 +116,12 @@ input::placeholder,textarea::placeholder{color:#d6d6d6}
 footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
 
 /* Modales */
-#adminModal,#editModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;align-items:center;justify-content:center;padding:16px}
+#adminModal,#editModal,#vendorModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;align-items:center;justify-content:center;padding:16px}
 .modal-card{background:#111;border:1px solid rgba(255,255,255,.25);border-radius:14px;max-width:420px;width:100%;padding:18px;color:#fff}
+.vendor-list{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.vendor-btn{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#1a1a1a;border:1px solid rgba(255,255,255,.25);border-radius:10px;padding:10px 12px;cursor:pointer}
+.vendor-btn:hover{filter:brightness(1.05)}
+.vendor-phone{opacity:.8;font-size:12px}
 </style>
 </head>
 <body>
@@ -182,6 +179,18 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
         </div>
       </div>
     </div>
+
+    <!-- Modal Selección de Vendedora -->
+    <div id="vendorModal">
+      <div class="modal-card">
+        <h3 style="margin:0 0 8px">Elegí la vendedora</h3>
+        <p class="muted" style="margin:0 0 10px">Se enviará por WhatsApp.</p>
+        <div id="vendorList" class="vendor-list"></div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:12px">
+          <button id="vendorCancel" class="btn" type="button">Cancelar</button>
+        </div>
+      </div>
+    </div>
   </header>
 
   <div class="tabs" id="tabs"></div>
@@ -194,7 +203,7 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
           <p class="muted"><strong>Dirección: </strong><span id="addr">—</span></p>
           <p class="muted"><strong>Horarios: </strong><span id="hours">—</span></p>
           <div class="actions">
-            <a class="btn" id="wapp" target="_blank" rel="noopener">WhatsApp</a>
+            <button class="btn" id="wapp" type="button">WhatsApp</button>
           </div>
         </div>
         <div style="min-height:200px">
@@ -217,7 +226,7 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
         <button class="cat-tab" data-cat="favoritos">Favoritos ❤️</button>
       </div>
 
-      <!-- Búsqueda / Export / Favoritos -->
+      <!-- Búsqueda / Favoritos -->
       <div class="fav-tools">
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <input id="searchCode" placeholder="Buscar por código..." style="max-width:220px" />
@@ -225,8 +234,8 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
         </div>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <span id="favCounter" class="fav-counter">0 favoritos</span>
+          <button id="copyFav" class="btn" type="button">Copiar portapapeles</button>
           <button id="sendFav" class="btn" type="button">Enviar favoritos por WhatsApp</button>
-          <button id="exportCsv" class="btn" type="button">Exportar CSV</button>
         </div>
       </div>
 
@@ -258,17 +267,6 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
     </div>
 
     <div class="card">
-      <h3>Contacto rápido</h3>
-      <form id="contactForm">
-        <label>Nombre<br/>
-          <input name="name" required placeholder="Tu nombre" />
-        </label>
-        <label>Mensaje<br/>
-          <textarea name="msg" required rows="4" placeholder="Quiero una cotización para…"></textarea>
-        </label>
-        <button class="btn" type="submit">Enviar por WhatsApp</button>
-      </form>
-      <hr style="border:0;border-top:1px solid rgba(255,255,255,.2);margin:16px 0"/>
       <h3>Sobre Óptica Yolanda</h3>
       <p class="muted">Especialistas en lentes, armazones y contacto. Examen visual y entrega rápida. Calidad al mejor precio.</p>
     </div>
@@ -276,36 +274,44 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
 
   <footer>
     <div>© <span id="year"></span> Óptica Yolanda. Todos los derechos reservados.</div>
-    <div class="muted">Express + Multer • Admin con ofertas, favoritos, export y mapas.</div>
+    <div class="muted">Express + Multer • Admin con ofertas, favoritos, selector de vendedora, mapas.</div>
   </footer>
 </div>
 
 <script>
-// ===== Datos de sucursales con mapQuery
+// ===== Datos de sucursales con vendedoras y mapQuery
 const BRANCHES = [
   {
     id:'central',
     nombre:'Óptica Yolanda Central',
     direccion:'Azara 1167 casi Brasil',
     horarios:'08:00 a 18:00',
-    whatsapp:'595986315354',
-    mapQuery:'Federación de Químicos del Paraguay, Azara 1175, Asunción 001220'
+    mapQuery:'Federación de Químicos del Paraguay, Azara 1175, Asunción 001220',
+    vendors:[
+      { name:'Dahiana', phone:'+595986315354' },
+      { name:'Belén',   phone:'+59591675556' }
+    ]
   },
   {
     id:'fernando',
     nombre:'Óptica Yolanda Fernando de la Mora',
     direccion:'Ruta Mcal. José Estigarribia esquina 15 de Mayo',
     horarios:'08:00 a 18:00',
-    whatsapp:'595983989860',
-    mapQuery:'Ruta Mariscal José Felix Estigarribia, Fernando de la Mora'
+    mapQuery:'Ruta Mariscal José Felix Estigarribia, Fernando de la Mora',
+    vendors:[
+      { name:'Gabriela', phone:'+595983989860' },
+      { name:'Naida',    phone:'+595976512219' }
+    ]
   },
   {
     id:'caacupe',
     nombre:'Óptica Yolanda Caacupé',
     direccion:'Ruta del Maestro 1807 esquina Independencia Nacional',
     horarios:'08:00 a 18:00',
-    whatsapp:'595972760646',
-    mapQuery:'Caacupé 030102'
+    mapQuery:'Caacupé 030102',
+    vendors:[
+      { name:'Celeste', phone:'+595972760646' }
+    ]
   }
 ];
 
@@ -328,14 +334,14 @@ const productsEl = document.getElementById('products');
 const branchTitle = document.getElementById('branchTitle');
 const addr = document.getElementById('addr');
 const hours = document.getElementById('hours');
-const wapp = document.getElementById('wapp');
+const wappBtn = document.getElementById('wapp');
 const uploadBlock = document.getElementById('uploadBlock');
 
 const searchCode = document.getElementById('searchCode');
 const clearSearch = document.getElementById('clearSearch');
-const exportCsv = document.getElementById('exportCsv');
 
 const favCounter = document.getElementById('favCounter');
+const copyFav = document.getElementById('copyFav');
 const sendFav = document.getElementById('sendFav');
 
 let current = BRANCHES[0].id;
@@ -399,7 +405,6 @@ async function fetchProductos(){
 }
 
 function parseGs(val){
-  // acepta "₲ 250.000", "250000", "250,000", etc.
   const s = (val ?? '').toString().trim();
   if(!s) return 0;
   const n = s.replace(/[^\d,\.]/g,'').replace(/\./g,'').replace(/,/g,'');
@@ -410,7 +415,7 @@ function discountPercent(p){
   const base = parseGs(p.precio);
   const promo = parseGs(p.precioPromo);
   if(!p.oferta || !base || !promo || promo >= base) return 0;
-  return Math.max(1, Math.round((1 - (promo/base)) * 100)); // mínimo 1%
+  return Math.max(1, Math.round((1 - (promo/base)) * 100));
 }
 
 // ===== Favoritos (por sucursal en localStorage)
@@ -434,15 +439,41 @@ function updateFavCounter(){
   favCounter.textContent = `${n} favorito${n===1?'':'s'}`;
 }
 
+// ===== Vendor modal
+const vendorModal = document.getElementById('vendorModal');
+const vendorList  = document.getElementById('vendorList');
+const vendorCancel= document.getElementById('vendorCancel');
+
+vendorCancel.onclick = ()=>{ vendorModal.style.display='none'; };
+
+function openVendorPicker(onPick){
+  const branch = BRANCHES.find(b=>b.id===current);
+  vendorList.innerHTML = '';
+  (branch.vendors || []).forEach(v=>{
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'vendor-btn';
+    btn.innerHTML = `<span>${v.name}</span><span class="vendor-phone">${v.phone}</span>`;
+    btn.onclick = ()=>{
+      vendorModal.style.display = 'none';
+      const num = (v.phone || '').replace(/\s+/g,'').replace(/^\+/, ''); // sin '+'
+      if(onPick) onPick(num);
+    };
+    vendorList.appendChild(btn);
+  });
+  vendorModal.style.display = 'flex';
+}
+
 // ===== Card de producto
 function productCard(p){
   const pct = discountPercent(p);
+  const discClass = pct>=30 ? 'disc-30' : (pct>=20 ? 'disc-20' : (pct>=10 ? 'disc-10' : ''));
 
   const wrap = document.createElement('div');
   wrap.className = 'product';
   wrap.innerHTML = `
     ${p.oferta ? '<div class="badge-offer">OFERTA</div>' : ''}
-    ${pct ? `<div class="badge-discount">-${pct}%</div>` : ''}
+    ${pct ? `<div class="badge-discount ${discClass}">-${pct}%</div>` : ''}
     <img src="${p.img}" alt="${p.nombre}" loading="lazy"/>
     <div class="actions-admin">
       <button class="btn small edit">Editar</button>
@@ -460,7 +491,6 @@ function productCard(p){
       </div>
     </div>`;
 
-  // Acciones
   wrap.querySelector('.fav-btn').onclick = () => toggleFav(p);
 
   const act = wrap.querySelector('.actions-admin');
@@ -477,16 +507,10 @@ async function renderBranch(){
   branchTitle.textContent = b.nombre;
   addr.textContent = b.direccion;
   hours.textContent = b.horarios;
-  wapp.href = `https://wa.me/${b.whatsapp}`;
 
-  // Mapa embebido + botones (usa mapQuery o lat/lng)
+  // Mapa embebido + botones (usa mapQuery)
   const mapDiv = document.getElementById('mapEmbed');
-  let q = null;
-  if (b.mapQuery) {
-    q = encodeURIComponent(b.mapQuery);
-  } else if (typeof b.lat === 'number' && typeof b.lng === 'number') {
-    q = encodeURIComponent(`${b.lat},${b.lng}`);
-  }
+  let q = b.mapQuery ? encodeURIComponent(b.mapQuery) : null;
   if (q) {
     mapDiv.innerHTML = `
       <iframe
@@ -516,14 +540,12 @@ async function renderBranch(){
   }
 
   if (currentCat === 'todos') {
-    // Ofertas primero
     const ofertas = productosCache.filter(p => p.oferta);
     if (ofertas.length){
       const h = document.createElement('div');
       h.className = 'cat-header'; h.textContent = "Ofertas";
       productsEl.appendChild(h); renderList(ofertas);
     }
-    // Resto por categoría
     CATS.forEach(cat => {
       const subset = productosCache.filter(p => (p.categoria || '') === cat);
       if (!subset.length) return;
@@ -555,33 +577,51 @@ document.getElementById('catTabs').addEventListener('click', (e)=>{
   renderBranch();
 });
 
-document.getElementById('contactForm').addEventListener('submit', (e)=>{
-  e.preventDefault();
-  const b = BRANCHES.find(x=>x.id===current);
-  const f = new FormData(e.target);
-  const name = encodeURIComponent(f.get('name'));
-  const msg  = encodeURIComponent(f.get('msg'));
-  window.open(`https://wa.me/${b.whatsapp}?text=Hola,%20soy%20${name}.%20${msg}`, '_blank');
-});
-
 searchCode.addEventListener('input', ()=> renderBranch());
 clearSearch.addEventListener('click', ()=>{ searchCode.value=''; renderBranch(); });
 
-exportCsv.addEventListener('click', ()=>{
-  const url = currentCat === 'todos' || currentCat === 'favoritos'
-    ? `/export/${current}.csv`
-    : `/export/${current}.csv?cat=${encodeURIComponent(currentCat)}`
-  window.open(url, '_blank');
+// WhatsApp general → selector de vendedora
+wappBtn.addEventListener('click', ()=>{
+  openVendorPicker((phone)=>{
+    const text = encodeURIComponent("Hola, me interesa este producto");
+    window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+  });
 });
 
-// Enviar favoritos por WhatsApp
-sendFav.addEventListener('click', ()=>{
-  const b = BRANCHES.find(x=>x.id===current);
+// Copiar favoritos al portapapeles
+copyFav.addEventListener('click', async ()=>{
   const favs = getFavs();
   if(!favs.length){ alert('No hay favoritos. Agrega con el corazón ❤'); return; }
+  const single = favs.length === 1;
   const lines = favs.map(f => `• ${f.codigo || '-'} — ${f.nombre || ''}${(f.oferta && f.precioPromo)?` (Promo: ${f.precioPromo})`:''}`);
-  const text = encodeURIComponent(`Hola, me interesan estos productos:\n\n${lines.join('\n')}\n\nSucursal: ${b.nombre}`);
-  window.open(`https://wa.me/${b.whatsapp}?text=${text}`, '_blank');
+  const head = single ? 'Hola, me interesa este producto:\n\n' : 'Hola, me interesan estos productos:\n\n';
+  const text = head + lines.join('\n');
+  try{
+    await navigator.clipboard.writeText(text);
+    alert('Lista copiada al portapapeles ✅');
+  }catch(e){
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); alert('Lista copiada al portapapeles ✅'); }
+    catch(err){ alert('No se pudo copiar.'); }
+    document.body.removeChild(ta);
+  }
+});
+
+// Enviar favoritos por WhatsApp → selector de vendedora
+sendFav.addEventListener('click', ()=>{
+  const favs = getFavs();
+  if(!favs.length){ alert('No hay favoritos. Agrega con el corazón ❤'); return; }
+
+  const single = favs.length === 1;
+  const lines = favs.map(f => `• ${f.codigo || '-'} — ${f.nombre || ''}${(f.oferta && f.precioPromo)?` (Promo: ${f.precioPromo})`:''}`);
+  const head = single ? 'Hola, me interesa este producto:\n\n' : 'Hola, me interesan estos productos:\n\n';
+  const text = encodeURIComponent(head + lines.join('\n'));
+
+  openVendorPicker((phone)=>{
+    window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+  });
 });
 
 // ===== Alta
