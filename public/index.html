@@ -748,6 +748,23 @@ async function delProduct(p){
 document.getElementById('year').textContent = new Date().getFullYear();
 updateFavCounter();
 renderBranch();
+</script><script>
+// Zoom de imagen con delegación en el contenedor de productos
+const zoomModal = document.getElementById('zoomModal');
+const zoomImg   = document.getElementById('zoomImg');
+const zoomClose = document.getElementById('zoomClose');
+
+document.getElementById('products').addEventListener('click', (e)=>{
+  const img = e.target.closest('.product img');
+  if(!img) return;
+  zoomImg.src = img.src;
+  zoomModal.classList.add('open');
+});
+
+zoomClose.addEventListener('click', ()=> zoomModal.classList.remove('open'));
+zoomModal.addEventListener('click', (e)=>{ if(e.target === zoomModal) zoomModal.classList.remove('open'); });
+window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') zoomModal.classList.remove('open'); });
 </script>
+
 </body>
 </html>
