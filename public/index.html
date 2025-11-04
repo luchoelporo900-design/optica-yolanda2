@@ -121,7 +121,23 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
 .vendor-list{display:flex;flex-direction:column;gap:10px;margin-top:8px}
 .vendor-btn{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#1a1a1a;border:1px solid rgba(255,255,255,.25);border-radius:10px;padding:10px 12px;cursor:pointer}
 .vendor-btn:hover{filter:brightness(1.05)}
-.vendor-phone{opacity:.8;font-size:12px}
+.vendor-phone{opacity:.8;font-size:12px}/* === Modal Zoom de imagen === */
+#zoomModal{
+  display:none; position:fixed; inset:0; z-index:9999;
+  background:rgba(0,0,0,.85); align-items:center; justify-content:center;
+}
+#zoomModal.open{ display:flex; }
+#zoomModal img{
+  max-width:92vw; max-height:85vh; border-radius:12px;
+  box-shadow:0 0 30px rgba(0,0,0,.6);
+}
+#zoomModal .zoom-close{
+  position:absolute; top:16px; right:20px;
+  background:#ff4040; color:#fff; border:none; cursor:pointer;
+  font-weight:800; font-size:20px; border-radius:8px; padding:6px 12px;
+}
+#zoomModal .zoom-close:hover{ filter:brightness(1.1); }
+
 </style>
 </head>
 <body>
@@ -130,6 +146,11 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
     <img src="img/logo_optica_yolanda.png" alt="Óptica Yolanda" />
     <h1>Óptica Yolanda</h1>
     <div class="subtitle">Elige la sucursal y mira dirección, horarios, WhatsApp y catálogo.</div>
+<!-- Modal de imagen ampliada -->
+<div id="zoomModal" aria-hidden="true">
+  <button id="zoomClose" class="zoom-close" type="button">× Cerrar</button>
+  <img id="zoomImg" alt="Vista ampliada" />
+</div>
 
     <div class="top-actions">
       <button id="adminBtn" class="btn" type="button">Administrador</button>
