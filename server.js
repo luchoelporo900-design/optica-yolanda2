@@ -1,209 +1,221 @@
+// server.js
 import express from "express";
 import multer from "multer";
-import fs from "fs";
 import path from "path";
-import cors from "cors";
+import fs from "fs";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// === CONFIG ===
-const DATA_DIR = path.join(__dirname, "data");
-const UP_DIR   = path.join(__dirname, "public", "uploads");
-const SUCURSALES = new Set(["central", "fernando", "caacupe"]);
-const ADMIN_KEY  = process.env.ADMIN_KEY || "yolanda2025"; // cambia en Render si quieres
-
-// Archivos estáticos
-app.use(express.static(path.join(__dirname, "public")));
-
-// Asegurar carpetas y JSON iniciales
-for (const s of SUCURSALES) {
-  fs.mkdirSync(path.join(UP_DIR, s), { recursive: true });
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-  const jf = path.join(DATA_DIR, `${s}.json`);
-  if (!fs.existsSync(jf)) {
-    fs.writeFileSync(jf, JSON.stringify({ productos: [] }, null, 2), "utf-8");
-  }
-}
-
-// Multer (subidas)
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, path.join(UP_DIR, req.params.sucursal)),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname) || ".jpg";
-    cb(null, `${Date.now()}_${Math.random().toString(36).slice(2)}${ext}`);
-  }
-});
-const upload = multer({ storage });
-
-// Helpers
-const jf = (s) => path.join(DATA_DIR, `${s}.json`);
-const readJson = (s) => JSON.parse(fs.readFileSync(jf(s), "utf-8"));
-const writeJson = (s, d) => fs.writeFileSync(jf(s), JSON.stringify(d, null, 2), "utf-8");
-const absFromRel = (rel) => path.join(__dirname, "public", rel.replace(/^\//, ""));
-
-// Admin middleware
-function checkAdmin(req, res, next) {
-  const k = req.headers["x-admin-key"];
-  if (!k || k !== ADMIN_KEY) return res.status(401).send("Admin requerido");
-  next();
-}
-
-// === RUTAS API ===
-
-// Obtener catálogo por sucursal
-app.get("/productos/:sucursal", (req, res) => {
-  const suc = req.params.sucursal;
-  if (!SUCURSALES.has(suc)) return res.status(400).json({ error: "Sucursal inválida" });
-  res.json(readJson(suc));
-});
-
-// Crear producto (admin)
-app.post("/upload/:sucursal", checkAdmin, upload.single("imagen"), (req, res) => {
-  const suc = req.params.sucursal;
-  if (!SUCURSALES.has(suc)) return res.status(400).json({ error: "Sucursal inválida" });
-  if (!req.file) return res.status(400).json({ error: "Falta imagen" });
-
-  const { nombre, precio, categoria, codigo, oferta, precioPromo } = req.body;
-  if (!nombre || !precio || !categoria || !codigo) {
-    try { fs.unlinkSync(absFromRel(`/uploads/${suc}/${req.file.filename}`)); } catch {}
-    return res.status(400).json({ error: "Faltan datos (nombre, precio, categoría, código)" });
-  }
-
-  const data = readJson(suc);
-  if (data.productos.some(p => (p.codigo || "").toLowerCase() === codigo.toLowerCase())) {
-    try { fs.unlinkSync(absFromRel(`/uploads/${suc}/${req.file.filename}`)); } catch {}
-    return res.status(409).json({ error: "Código ya existente" });
-  }
-
-  const id = `${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
-  const prod = {
-    id,
-    codigo,
-    nombre,
-    precio,
-    categoria,
-    oferta: oferta === "true" || oferta === true || oferta === "on",
-    precioPromo: precioPromo || "",
-    img: `/uploads/${suc}/${req.file.filename}`,
-    ts: Date.now()
-  };
-
-  data.productos.push(prod);
-  writeJson(suc, data);
-  res.json({ ok: true, producto: prod });
-});
-
-// Editar producto (admin)
-app.put("/producto/:sucursal/:id", checkAdmin, upload.single("imagen"), (req, res) => {
-  const { sucursal, id } = req.params;
-  if (!SUCURSALES.has(sucursal)) return res.status(400).json({ error: "Sucursal inválida" });
-
-  const data = readJson(sucursal);
-  const idx = data.productos.findIndex(p => p.id === id);
-  if (idx === -1) return res.status(404).json({ error: "Producto no encontrado" });
-
-  const p = data.productos[idx];
-  const { nombre, precio, categoria, codigo, oferta, precioPromo } = req.body;
-
-  if (codigo && codigo !== p.codigo) {
-    if (data.productos.some(x => x.id !== id && (x.codigo || "").toLowerCase() === codigo.toLowerCase())) {
-      return res.status(409).json({ error: "Código ya existente" });
+// --- Rutas de estáticos ---
+const PUBLIC_DIR = path.join(__dirname, "public");
+app.use(express.static(PUBLIC_DIR, {
+  setHeaders(res, filePath) {
+    // Evita que Render o el navegador cacheen demasiado el index
+    if (filePath.endsWith("index.html")) {
+      res.setHeader("Cache-Control", "no-store");
     }
-    p.codigo = codigo;
   }
-  if (nombre) p.nombre = nombre;
-  if (precio) p.precio = precio;
-  if (categoria) p.categoria = categoria;
+}));
 
-  if (typeof oferta !== "undefined") {
-    p.oferta = (oferta === "true" || oferta === true || oferta === "on");
-  }
-  if (typeof precioPromo !== "undefined") {
-    p.precioPromo = precioPromo;
-  }
+// --- Disco persistente (Render) ---
+const UPLOAD_ROOT = path.join(PUBLIC_DIR, "uploads"); // /opt/render/project/src/public/uploads
+const DATA_DIR    = path.join(UPLOAD_ROOT, "_data");
 
+// Crea carpetas si no existen
+for (const p of [UPLOAD_ROOT, DATA_DIR]) {
+  fs.mkdirSync(p, { recursive: true });
+}
+
+// --- Utilidades JSON ---
+function safeBranch(b) {
+  return String(b || "").toLowerCase().replace(/[^a-z0-9_-]+/g, "_");
+}
+function branchDir(b) {
+  const dir = path.join(UPLOAD_ROOT, safeBranch(b));
+  fs.mkdirSync(dir, { recursive: true });
+  return dir;
+}
+function branchDbPath(b) {
+  return path.join(DATA_DIR, `${safeBranch(b)}.json`);
+}
+function readDb(b) {
+  const fp = branchDbPath(b);
+  if (!fs.existsSync(fp)) return { productos: [] };
+  try { return JSON.parse(fs.readFileSync(fp, "utf8")) || { productos: [] }; }
+  catch { return { productos: [] }; }
+}
+function writeDb(b, data) {
+  const fp = branchDbPath(b);
+  fs.writeFileSync(fp, JSON.stringify(data, null, 2), "utf8");
+}
+
+// --- Autenticación admin muy simple ---
+const REQUIRED_ADMIN_KEY = process.env.ADMIN_KEY || null;
+function requireAdmin(req, res, next) {
+  const key = String(req.get("x-admin-key") || "");
+  if (REQUIRED_ADMIN_KEY) {
+    if (key === REQUIRED_ADMIN_KEY) return next();
+  } else {
+    if (key.trim() !== "") return next(); // si no definiste ADMIN_KEY, cualquier no-vacío vale
+  }
+  return res.status(401).send("Admin requerido");
+}
+
+// --- Multer (subidas de imágenes) ---
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, branchDir(req.params.sucursal));
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    const base = path.basename(file.originalname, ext).replace(/[^a-z0-9_-]+/gi, "_");
+    cb(null, `${Date.now()}_${base}${ext}`);
+  }
+});
+const upload = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    if (/^image\//.test(file.mimetype)) return cb(null, true);
+    cb(new Error("Solo imágenes"));
+  },
+  limits: { fileSize: 10 * 1024 * 1024 } // 10 MB
+});
+
+// --- Helpers de normalización ---
+function normalizeBool(v) {
+  if (typeof v === "boolean") return v;
+  const s = String(v || "").toLowerCase();
+  return ["1","true","sí","si","on","yes"].includes(s);
+}
+function publicImgUrl(fileFullPath) {
+  // Devuelve el path público a servir por express.static
+  const rel = path.relative(PUBLIC_DIR, fileFullPath).split(path.sep).join("/");
+  return `/${rel}`;
+}
+
+// --- Endpoints ---
+
+// Health
+app.get("/healthz", (_req, res) => res.send("ok"));
+
+// Obtener productos de una sucursal
+app.get("/productos/:sucursal", (req, res) => {
+  const data = readDb(req.params.sucursal);
+  res.json({ productos: data.productos || [] });
+});
+
+// Subir producto nuevo (imagen obligatoria)
+app.post("/upload/:sucursal", requireAdmin, upload.single("imagen"), (req, res) => {
+  try {
+    const suc = req.params.sucursal;
+    const data = readDb(suc);
+
+    const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    const nuevo = {
+      id,
+      codigo: (req.body.codigo || "").trim(),
+      nombre: (req.body.nombre || "").trim(),
+      precio: (req.body.precio || "").trim(),
+      categoria: (req.body.categoria || "dama").trim(),
+      oferta: normalizeBool(req.body.oferta),
+      precioPromo: (req.body.precioPromo || "").trim(),
+      img: req.file ? publicImgUrl(req.file.path) : ""
+    };
+
+    if (!nuevo.codigo || !nuevo.nombre || !nuevo.precio || !nuevo.img) {
+      return res.status(400).send("Faltan campos obligatorios");
+    }
+
+    data.productos = Array.isArray(data.productos) ? data.productos : [];
+    data.productos.unshift(nuevo); // aparece arriba
+    writeDb(suc, data);
+
+    res.json({ ok: true, producto: nuevo });
+  } catch (e) {
+    console.error(e);
+    res.status(500).send("Error al subir");
+  }
+});
+
+// Editar producto (imagen opcional)
+app.put("/producto/:sucursal/:id", requireAdmin, upload.single("imagen"), (req, res) => {
+  const suc = req.params.sucursal;
+  const id  = req.params.id;
+  const data = readDb(suc);
+
+  const i = (data.productos || []).findIndex(p => p.id === id);
+  if (i === -1) return res.status(404).send("No encontrado");
+
+  // Si viene imagen nueva, actualizamos ruta
   if (req.file) {
-    try { fs.unlinkSync(absFromRel(p.img)); } catch {}
-    p.img = `/uploads/${sucursal}/${req.file.filename}`;
+    data.productos[i].img = publicImgUrl(req.file.path);
   }
-  p.ts = Date.now();
+  const b = req.body || {};
+  if (b.codigo)      data.productos[i].codigo = String(b.codigo).trim();
+  if (b.nombre)      data.productos[i].nombre = String(b.nombre).trim();
+  if (b.precio)      data.productos[i].precio = String(b.precio).trim();
+  if (b.categoria)   data.productos[i].categoria = String(b.categoria).trim();
+  if (typeof b.oferta !== "undefined") data.productos[i].oferta = normalizeBool(b.oferta);
+  if (typeof b.precioPromo !== "undefined") data.productos[i].precioPromo = String(b.precioPromo).trim();
 
-  data.productos[idx] = p;
-  writeJson(sucursal, data);
-  res.json({ ok: true, producto: p });
+  writeDb(suc, data);
+  res.json({ ok: true, producto: data.productos[i] });
 });
 
-// Eliminar producto (admin)
-app.delete("/producto/:sucursal/:id", checkAdmin, (req, res) => {
-  const { sucursal, id } = req.params;
-  if (!SUCURSALES.has(sucursal)) return res.status(400).json({ error: "Sucursal inválida" });
+// Eliminar producto
+app.delete("/producto/:sucursal/:id", requireAdmin, (req, res) => {
+  const suc = req.params.sucursal;
+  const id  = req.params.id;
+  const data = readDb(suc);
 
-  const data = readJson(sucursal);
-  const idx = data.productos.findIndex(p => p.id === id);
-  if (idx === -1) return res.status(404).json({ error: "Producto no encontrado" });
+  const idx = (data.productos || []).findIndex(p => p.id === id);
+  if (idx === -1) return res.status(404).send("No encontrado");
 
-  try { fs.unlinkSync(absFromRel(data.productos[idx].img)); } catch {}
-  const [removed] = data.productos.splice(idx, 1);
-  writeJson(sucursal, data);
-  res.json({ ok: true, removed });
+  // (Opcional) podrías borrar la imagen física:
+  // try { fs.unlinkSync(path.join(PUBLIC_DIR, data.productos[idx].img)); } catch {}
+
+  data.productos.splice(idx, 1);
+  writeDb(suc, data);
+  res.json({ ok: true });
 });
 
-// Exportar CSV / JSON
+// Exportar CSV
 app.get("/export/:sucursal.csv", (req, res) => {
   const suc = req.params.sucursal;
-  if (!SUCURSALES.has(suc)) return res.status(400).send("Sucursal inválida");
-  const { cat } = req.query;
-  const data = readJson(suc);
-  const rows = (data.productos || [])
-    .filter(p => !cat || p.categoria === cat)
-    .map(p => ({
-      codigo: p.codigo || "",
-      nombre: p.nombre || "",
-      precio: (p.precio || "").toString().replace(/\n/g, " "),
-      categoria: p.categoria || "",
-      oferta: p.oferta ? "1" : "0",
-      precio_promo: (p.precioPromo || "").toString().replace(/\n/g, " "),
-      imagen: p.img || ""
-    }));
+  const data = readDb(suc);
+  const items = data.productos || [];
 
-  const header = ["codigo","nombre","precio","categoria","oferta","precio_promo","imagen"];
-  const csv = [
+  const header = ["id","codigo","nombre","precio","oferta","precioPromo","categoria","img"];
+  const lines = [
     header.join(","),
-    ...rows.map(r => header.map(h => {
-      const v = (r[h] ?? "").toString();
-      return (v.includes(",") || v.includes('"') || v.includes("\n"))
-        ? `"${v.replace(/"/g, '""')}"`
-        : v;
+    ...items.map(p => header.map(k => {
+      // Escapar comas y comillas
+      const raw = (p[k] ?? "").toString();
+      if (/[",\n]/.test(raw)) {
+        return `"${raw.replace(/"/g, '""')}"`;
+      }
+      return raw;
     }).join(","))
-  ].join("\n");
+  ];
+  const csv = lines.join("\n");
 
   res.setHeader("Content-Type", "text/csv; charset=utf-8");
-  res.setHeader("Content-Disposition", `attachment; filename="${suc}.csv"`);
+  res.setHeader("Content-Disposition", `attachment; filename="${safeBranch(suc)}.csv"`);
   res.send(csv);
 });
 
-app.get("/export/:sucursal.json", (req, res) => {
-  const suc = req.params.sucursal;
-  if (!SUCURSALES.has(suc)) return res.status(400).send("Sucursal inválida");
-  res.json(readJson(suc));
+// Fallback a index.html (single-page feel)
+app.get("*", (_req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, "index.html"));
 });
 
-// Debug opcional
-app.get("/debug/files/:sucursal", (req, res) => {
-  const dir = path.join(UP_DIR, req.params.sucursal);
-  try { res.json({ dir, files: fs.readdirSync(dir) }); }
-  catch(e){ res.status(500).json({ dir, error: e.message }); }
+// --- Lanzar servidor ---
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => {
+  console.log(`Óptica Yolanda backend en http://localhost:${PORT}`);
+  console.log(`Uploads en ${UPLOAD_ROOT}`);
 });
-
-// SPA
-app.get("*", (_, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Óptica Yolanda on http://localhost:${PORT}`));
