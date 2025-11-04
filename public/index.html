@@ -18,7 +18,8 @@ body{
   background-blend-mode:overlay; background-size:cover; color:var(--blanco);
 }
 .container{max-width:1100px;margin:0 auto;padding:16px}
-/* Header */
+
+/* Header boutique */
 header{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:25px 0 10px;text-align:center;border-bottom:1px solid rgba(255,255,255,.18)}
 header img{
   width:150px;height:auto;margin-bottom:10px;border-radius:12px;position:relative;overflow:hidden;
@@ -61,7 +62,7 @@ header h1{
 .info{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media (max-width:720px){.info{grid-template-columns:1fr}}
 
-/* Botón */
+/* Botones */
 .btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(180deg,var(--oro2),var(--oro3));color:#201a00;font-weight:700;border:1px solid rgba(255,255,255,.65);border-radius:10px;padding:10px 14px;text-decoration:none;cursor:pointer;transition:all .2s}
 .btn:hover{filter:brightness(1.05);box-shadow:0 10px 26px rgba(255,215,0,.35)}
 
@@ -93,10 +94,13 @@ header h1{
 input,textarea{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:10px;color:#fff;width:100%;padding:10px}
 input::placeholder,textarea::placeholder{color:#d6d6d6}
 
+/* Barra búsqueda + export */
+.tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between;margin:8px 0 6px}
+
 /* Footer */
 footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
 
-/* Modal admin & editar */
+/* Modales */
 #adminModal,#editModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;align-items:center;justify-content:center;padding:16px}
 .modal-card{background:#111;border:1px solid rgba(255,255,255,.25);border-radius:14px;max-width:420px;width:100%;padding:18px;color:#fff}
 </style>
@@ -177,6 +181,17 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
         <button class="cat-tab" data-cat="solares">Solares</button>
       </div>
 
+      <!-- Búsqueda y export -->
+      <div class="tools">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input id="searchCode" placeholder="Buscar por código..." style="max-width:220px" />
+          <button id="clearSearch" class="btn" type="button">Limpiar</button>
+        </div>
+        <div>
+          <button id="exportCsv" class="btn" type="button">Exportar CSV</button>
+        </div>
+      </div>
+
       <div class="products" id="products"></div>
 
       <div class="form-upload" id="uploadBlock">
@@ -215,11 +230,12 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
 
   <footer>
     <div>© <span id="year"></span> Óptica Yolanda. Todos los derechos reservados.</div>
-    <div class="muted">Backend Express + Multer (admin con contraseña, edición y borrado).</div>
+    <div class="muted">Backend Express + Multer (admin con contraseña, edición y borrado, export CSV).</div>
   </footer>
 </div>
 
 <script>
+// Datos de sucursales
 const BRANCHES = [
   { id:'central',  nombre:'Óptica Yolanda Central',  direccion:'Azara 1167 casi Brasil', horarios:'08:00 a 18:00', whatsapp:'595986315354' },
   { id:'fernando', nombre:'Óptica Yolanda Fernando de la Mora', direccion:'Ruta Mcal. José Estigarribia esquina 15 de Mayo', horarios:'08:00 a 18:00', whatsapp:'595983989860' },
@@ -233,6 +249,10 @@ const addr = document.getElementById('addr');
 const hours = document.getElementById('hours');
 const wapp = document.getElementById('wapp');
 const uploadBlock = document.getElementById('uploadBlock');
+
+const searchCode = document.getElementById('searchCode');
+const clearSearch = document.getElementById('clearSearch');
+const exportCsv = document.getElementById('exportCsv');
 
 let current = BRANCHES[0].id;
 let currentCat = 'dama';
@@ -254,10 +274,9 @@ function refreshAdminUI(){
   uploadBlock.style.display = on ? 'block' : 'none';
   adminBadge.style.display = on ? 'inline-flex' : 'none';
   adminBtn.textContent = on ? 'Salir de administrador' : 'Administrador';
-  // mostrar botones editar/borrar en tarjetas
-  Array.from(document.querySelectorAll('.actions-admin')).forEach(x=> x.style.display = on ? 'flex' : 'none');
+  document.querySelectorAll('.actions-admin').forEach(x=> x.style.display = on ? 'flex' : 'none');
 }
-refreshAdminUI();
+function adminHeader(){ return { 'x-admin-key': localStorage.getItem('oy_admin_key') || '' }; }
 
 adminBtn.addEventListener('click', ()=>{
   if(isAdmin()){ setAdmin(false); return; }
@@ -275,11 +294,7 @@ adminOk.addEventListener('click', ()=>{
 });
 window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') adminModal.style.display='none'; });
 
-function adminHeader(){
-  return { 'x-admin-key': localStorage.getItem('oy_admin_key') || '' };
-}
-
-// Tabs sucursales
+// UI sucursales
 function renderTabs(){
   tabsEl.innerHTML = '';
   BRANCHES.forEach(b => {
@@ -313,7 +328,6 @@ function productCard(p){
       <div style="font-weight:700">${p.nombre}</div>
       <div class="price">${p.precio}</div>
     </div>`;
-  // acciones admin
   const act = wrap.querySelector('.actions-admin');
   act.style.display = isAdmin() ? 'flex' : 'none';
   wrap.querySelector('.edit').onclick = () => openEdit(p);
@@ -332,9 +346,13 @@ async function renderBranch(){
   productsEl.innerHTML = '';
   const data = await fetchProductos();
   productosCache = data.productos || [];
+
+  const q = (searchCode.value || '').trim().toLowerCase();
   productosCache
-    .filter(p => !p.categoria || p.categoria === currentCat)
+    .filter(p => (!p.categoria || p.categoria === currentCat))
+    .filter(p => !q || (p.codigo || '').toLowerCase().includes(q))
     .forEach(p => productsEl.appendChild(productCard(p)));
+
   refreshAdminUI();
 }
 
@@ -345,19 +363,27 @@ document.getElementById('contactForm').addEventListener('submit', (e)=>{
   const f = new FormData(e.target);
   const name = encodeURIComponent(f.get('name'));
   const msg  = encodeURIComponent(f.get('msg'));
-  const text = `Hola, soy ${name}. ${msg}`;
-  window.open(`https://wa.me/${b.whatsapp}?text=${text}`, '_blank');
+  window.open(`https://wa.me/${b.whatsapp}?text=Hola,%20soy%20${name}.%20${msg}`, '_blank');
 });
 
 // Categorías
-const categoryTabs = document.querySelectorAll('.cat-tab');
-categoryTabs.forEach(btn=>{
+document.querySelectorAll('.cat-tab').forEach(btn=>{
   btn.addEventListener('click', ()=>{
-    categoryTabs.forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.cat-tab').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
     currentCat = btn.dataset.cat;
     renderBranch();
   });
+});
+
+// Buscar + limpiar
+searchCode.addEventListener('input', ()=> renderBranch());
+clearSearch.addEventListener('click', ()=>{ searchCode.value=''; renderBranch(); });
+
+// Export CSV (respeta sucursal y categoría)
+exportCsv.addEventListener('click', ()=>{
+  const url = `/export/${current}.csv?cat=${encodeURIComponent(currentCat)}`;
+  window.open(url, '_blank');
 });
 
 // Alta
@@ -385,7 +411,7 @@ document.getElementById('uploadBtn').addEventListener('click', async ()=>{
     document.getElementById('prodPrice').value='';
     document.getElementById('prodImage').value='';
     currentCat = cat;
-    categoryTabs.forEach(b=>b.classList.toggle('active', b.dataset.cat===cat));
+    document.querySelectorAll('.cat-tab').forEach(b=>b.classList.toggle('active', b.dataset.cat===cat));
     renderBranch();
   }else{
     alert('No se pudo subir. ' + (await r.text()));
@@ -401,7 +427,6 @@ const editCat   = document.getElementById('editCat');
 const editImage = document.getElementById('editImage');
 const editCancel= document.getElementById('editCancel');
 const editSave  = document.getElementById('editSave');
-
 let editingId = null;
 
 function openEdit(p){
@@ -414,7 +439,6 @@ function openEdit(p){
   editImage.value = '';
   editModal.style.display = 'flex';
 }
-
 editCancel.onclick = ()=>{ editModal.style.display='none'; editingId=null; };
 
 editSave.onclick = async ()=>{
@@ -431,7 +455,7 @@ editSave.onclick = async ()=>{
     editModal.style.display = 'none';
     const updated = await r.json();
     currentCat = updated.producto.categoria || currentCat;
-    categoryTabs.forEach(b=>b.classList.toggle('active', b.dataset.cat===currentCat));
+    document.querySelectorAll('.cat-tab').forEach(b=>b.classList.toggle('active', b.dataset.cat===currentCat));
     renderBranch();
   }else{
     alert('No se pudo editar. ' + (await r.text()));
