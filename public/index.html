@@ -1,190 +1,223 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Óptica Yolanda — 3 Sucursales</title>
-  <meta name="description" content="Catálogo y contactos de Óptica Yolanda. Elige la sucursal para ver dirección, horarios, WhatsApp y catálogo." />
-  <link rel="icon" href="img/logo_optica_yolanda.png" />
-  <style>
-  :root{
-    --rojo:#8b0000; --negro:#000; --blanco:#fff; --gris:#ccc;
-    --oro:#ffd700; --oro1:#fff2a6; --oro2:#ffd34d; --oro3:#caa231; --oro4:#8f6b00;
-  }
-  /* Fondo boutique + textura */
-  body{
-    margin:0; font-family:"Poppins",system-ui,Segoe UI,Roboto,Ubuntu,Arial;
-    background:
-      linear-gradient(180deg,var(--rojo),var(--negro)),
-      url("https://www.transparenttextures.com/patterns/dark-leather.png");
-    background-blend-mode:overlay; background-size:cover; color:var(--blanco);
-  }
-  .container{max-width:1100px;margin:0 auto;padding:16px}
-  /* Header centrado */
-  header{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:25px 0 10px;text-align:center;border-bottom:1px solid rgba(255,255,255,.18)}
-  header img{
-    width:150px;height:auto;margin-bottom:10px;border-radius:12px;
-    position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.4);
-    transition: transform .4s ease, box-shadow .4s ease;
-  }
-  header img:hover{transform:scale(1.03); box-shadow:0 6px 25px rgba(255,215,0,.4);}
-  /* Reflejo del logo */
-  header img::after{
-    content:""; position:absolute; top:-120%; left:-75%; width:50%; height:300%;
-    background:linear-gradient(120deg, rgba(255,255,255,.05), rgba(255,255,255,.3) 50%, rgba(255,255,255,.05));
-    transform:skewX(-25deg); animation:shineMove 6s ease-in-out infinite; pointer-events:none; border-radius:inherit;
-  }
-  @keyframes shineMove{0%{top:-120%;left:-75%}50%{top:-50%;left:100%}100%{top:120%;left:200%}}
-  /* Título dorado metálico */
-  header h1{
-    margin:0;font-size:28px;letter-spacing:1px;font-weight:700;
-    background:linear-gradient(135deg,var(--oro1),var(--oro2) 30%,var(--oro3) 55%,var(--oro1) 70%,var(--oro4) 100%);
-    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-fill-color:transparent;
-    background-size:200% 100%; animation:goldSparkle 6s linear infinite; text-shadow:0 1px 1px rgba(0,0,0,.35);
-  }
-  @keyframes goldSparkle{0%{background-position:0% 0}100%{background-position:200% 0}}
-  @media (prefers-reduced-motion:reduce){header h1{animation:none;background-position:50% 0}}
-  .subtitle{font-size:14px;color:var(--gris)}
-  /* Admin row */
-  .top-actions{margin-top:8px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-  .badge{display:none;background:#14b814;color:#000;padding:6px 10px;border-radius:999px;font-weight:700}
-  /* Tabs sucursales */
-  .tabs{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin:16px 0}
-  .tab{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);padding:8px 14px;border-radius:10px;cursor:pointer;font-weight:600;transition:all .2s}
-  .tab:hover{background:rgba(255,255,255,.25)}
-  .tab.active{background:linear-gradient(135deg,var(--oro1),var(--oro2) 40%,var(--oro3));color:#201a00;border-color:rgba(255,255,255,.6);box-shadow:0 0 0 1px rgba(255,255,255,.35) inset,0 6px 18px rgba(255,215,0,.25)}
-  /* Layout */
-  .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
-  @media (max-width:960px){.grid{grid-template-columns:1fr}}
-  /* Cards */
-  .card{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.25);border-radius:16px;padding:18px;margin-bottom:18px;box-shadow:0 10px 28px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.06) inset;backdrop-filter:blur(6px)}
-  .card h3{margin:0 0 10px}
-  .muted{color:var(--gris)}
-  .info{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  @media (max-width:720px){.info{grid-template-columns:1fr}}
-  /* Botón */
-  .btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(180deg,var(--oro2),var(--oro3));color:#201a00;font-weight:700;border:1px solid rgba(255,255,255,.65);border-radius:10px;padding:10px 14px;text-decoration:none;cursor:pointer;transition:all .2s}
-  .btn:hover{filter:brightness(1.05);box-shadow:0 10px 26px rgba(255,215,0,.35)}
-  /* Categorías */
-  .category-tabs{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin:10px 0 14px}
-  .cat-tab{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:8px 14px;cursor:pointer;transition:all .2s}
-  .cat-tab:hover{background:rgba(255,255,255,.25)}
-  .cat-tab.active{background:var(--oro2);color:#000;border-color:var(--oro2)}
-  /* Productos */
-  .products{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  @media (max-width:960px){.products{grid-template-columns:repeat(2,1fr)}}
-  @media (max-width:560px){.products{grid-template-columns:1fr}}
-  .product{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:12px;overflow:hidden;transition:transform .2s,box-shadow .2s}
-  .product:hover{transform:translateY(-3px);box-shadow:0 5px 20px rgba(255,215,0,.25)}
-  .product img{width:100%;height:160px;object-fit:cover;display:block}
-  .product .pbd{padding:12px}
-  .price{color:var(--oro2);font-weight:800;margin-top:4px;text-shadow:0 1px 0 rgba(0,0,0,.35)}
-  /* Form */
-  .form-upload{margin-top:10px}
-  .form-upload input,.form-upload select,.form-upload button{padding:10px;margin:5px 0;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff}
-  .form-upload button{background:linear-gradient(180deg,var(--oro2),var(--oro3));color:#201a00;border:1px solid rgba(255,255,255,.65)}
-  input,textarea{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:10px;color:#fff;width:100%;padding:10px}
-  input::placeholder,textarea::placeholder{color:#d6d6d6}
-  /* Footer */
-  footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
-  /* Modal admin */
-  #adminModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;align-items:center;justify-content:center;padding:16px}
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Óptica Yolanda — 3 Sucursales</title>
+<link rel="icon" href="img/logo_optica_yolanda.png" />
+<style>
+:root{
+  --rojo:#8b0000; --negro:#000; --blanco:#fff; --gris:#ccc;
+  --oro:#ffd700; --oro1:#fff2a6; --oro2:#ffd34d; --oro3:#caa231; --oro4:#8f6b00;
+}
+body{
+  margin:0; font-family:"Poppins",system-ui,Segoe UI,Roboto,Ubuntu,Arial;
+  background:
+    linear-gradient(180deg,var(--rojo),var(--negro)),
+    url("https://www.transparenttextures.com/patterns/dark-leather.png");
+  background-blend-mode:overlay; background-size:cover; color:var(--blanco);
+}
+.container{max-width:1100px;margin:0 auto;padding:16px}
+/* Header */
+header{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:25px 0 10px;text-align:center;border-bottom:1px solid rgba(255,255,255,.18)}
+header img{
+  width:150px;height:auto;margin-bottom:10px;border-radius:12px;position:relative;overflow:hidden;
+  box-shadow:0 4px 20px rgba(0,0,0,.4);transition: transform .4s ease, box-shadow .4s ease;
+}
+header img:hover{transform:scale(1.03);box-shadow:0 6px 25px rgba(255,215,0,.4)}
+header img::after{
+  content:""; position:absolute; top:-120%; left:-75%; width:50%; height:300%;
+  background:linear-gradient(120deg, rgba(255,255,255,.05), rgba(255,255,255,.3) 50%, rgba(255,255,255,.05));
+  transform:skewX(-25deg); animation:shineMove 6s ease-in-out infinite; pointer-events:none; border-radius:inherit;
+}
+@keyframes shineMove{0%{top:-120%;left:-75%}50%{top:-50%;left:100%}100%{top:120%;left:200%}}
+header h1{
+  margin:0;font-size:28px;letter-spacing:1px;font-weight:700;
+  background:linear-gradient(135deg,var(--oro1),var(--oro2) 30%,var(--oro3) 55%,var(--oro1) 70%,var(--oro4) 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-fill-color:transparent;
+  background-size:200% 100%; animation:goldSparkle 6s linear infinite; text-shadow:0 1px 1px rgba(0,0,0,.35);
+}
+@keyframes goldSparkle{0%{background-position:0% 0}100%{background-position:200% 0}}
+@media (prefers-reduced-motion:reduce){header h1{animation:none;background-position:50% 0}}
+.subtitle{font-size:14px;color:var(--gris)}
+.top-actions{margin-top:8px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.badge{display:none;background:#14b814;color:#000;padding:6px 10px;border-radius:999px;font-weight:700}
+
+/* Tabs sucursales */
+.tabs{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin:16px 0}
+.tab{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);padding:8px 14px;border-radius:10px;cursor:pointer;font-weight:600;transition:all .2s}
+.tab:hover{background:rgba(255,255,255,.25)}
+.tab.active{background:linear-gradient(135deg,var(--oro1),var(--oro2) 40%,var(--oro3));color:#201a00;border-color:rgba(255,255,255,.6);box-shadow:0 0 0 1px rgba(255,255,255,.35) inset,0 6px 18px rgba(255,215,0,.25)}
+
+/* Layout & Cards */
+.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
+@media (max-width:960px){.grid{grid-template-columns:1fr}}
+.card{
+  background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.25);border-radius:16px;padding:18px;margin-bottom:18px;
+  box-shadow:0 10px 28px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.06) inset;backdrop-filter:blur(6px)
+}
+.card h3{margin:0 0 10px}
+.muted{color:var(--gris)}
+.info{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:720px){.info{grid-template-columns:1fr}}
+
+/* Botón */
+.btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(180deg,var(--oro2),var(--oro3));color:#201a00;font-weight:700;border:1px solid rgba(255,255,255,.65);border-radius:10px;padding:10px 14px;text-decoration:none;cursor:pointer;transition:all .2s}
+.btn:hover{filter:brightness(1.05);box-shadow:0 10px 26px rgba(255,215,0,.35)}
+
+/* Categorías */
+.category-tabs{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin:10px 0 14px}
+.cat-tab{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:8px 14px;cursor:pointer;transition:all .2s}
+.cat-tab:hover{background:rgba(255,255,255,.25)}
+.cat-tab.active{background:var(--oro2);color:#000;border-color:var(--oro2)}
+
+/* Productos */
+.products{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:960px){.products{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){.products{grid-template-columns:1fr}}
+.product{position:relative;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:12px;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.product:hover{transform:translateY(-3px);box-shadow:0 5px 20px rgba(255,215,0,.25)}
+.product img{width:100%;height:160px;object-fit:cover;display:block}
+.product .pbd{padding:12px}
+.code{font-size:12px;opacity:.8;margin-bottom:3px}
+.price{color:var(--oro2);font-weight:800;margin-top:4px;text-shadow:0 1px 0 rgba(0,0,0,.35)}
+.actions-admin{position:absolute;top:8px;right:8px;display:none;gap:6px}
+.actions-admin .small{font-size:12px;padding:6px 8px;border-radius:8px}
+
+/* Form */
+.form-upload{margin-top:10px}
+.form-upload input,.form-upload select,.form-upload button{
+  padding:10px;margin:5px 0;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff
+}
+.form-upload button{background:linear-gradient(180deg,var(--oro2),var(--oro3));color:#201a00;border:1px solid rgba(255,255,255,.65)}
+input,textarea{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:10px;color:#fff;width:100%;padding:10px}
+input::placeholder,textarea::placeholder{color:#d6d6d6}
+
+/* Footer */
+footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+
+/* Modal admin & editar */
+#adminModal,#editModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;align-items:center;justify-content:center;padding:16px}
+.modal-card{background:#111;border:1px solid rgba(255,255,255,.25);border-radius:14px;max-width:420px;width:100%;padding:18px;color:#fff}
+</style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <img src="img/logo_optica_yolanda.png" alt="Óptica Yolanda" />
-      <h1>Óptica Yolanda</h1>
-      <div class="subtitle">Elige la sucursal y mira dirección, horarios, WhatsApp y catálogo.</div>
+<div class="container">
+  <header>
+    <img src="img/logo_optica_yolanda.png" alt="Óptica Yolanda" />
+    <h1>Óptica Yolanda</h1>
+    <div class="subtitle">Elige la sucursal y mira dirección, horarios, WhatsApp y catálogo.</div>
 
-      <div class="top-actions">
-        <button id="adminBtn" class="btn" type="button">Administrador</button>
-        <span id="adminBadge" class="badge">Admin activo</span>
-      </div>
+    <div class="top-actions">
+      <button id="adminBtn" class="btn" type="button">Administrador</button>
+      <span id="adminBadge" class="badge">Admin activo</span>
+    </div>
 
-      <!-- Modal Admin -->
-      <div id="adminModal">
-        <div style="background:#111;border:1px solid rgba(255,255,255,.25);border-radius:14px;max-width:380px;width:100%;padding:18px;color:#fff">
-          <h3 style="margin-top:0">Ingreso administrador</h3>
-          <p style="opacity:.8;margin-top:0">Colocá tu contraseña para habilitar la carga de productos.</p>
-          <input id="adminPass" type="password" placeholder="Contraseña"/>
-          <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
-            <button id="adminCancel" class="btn" type="button">Cancelar</button>
-            <button id="adminOk" class="btn" type="button">Ingresar</button>
-          </div>
-          <div id="adminError" style="color:#ffb3b3;margin-top:10px;display:none">Contraseña incorrecta</div>
+    <!-- Modal Admin -->
+    <div id="adminModal">
+      <div class="modal-card">
+        <h3 style="margin:0 0 8px">Ingreso administrador</h3>
+        <p style="opacity:.8;margin-top:0">Colocá tu contraseña para habilitar edición/carga.</p>
+        <input id="adminPass" type="password" placeholder="Contraseña"/>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px">
+          <button id="adminCancel" class="btn" type="button">Cancelar</button>
+          <button id="adminOk" class="btn" type="button">Ingresar</button>
         </div>
-      </div>
-    </header>
-
-    <div class="tabs" id="tabs"></div>
-
-    <div class="grid">
-      <div class="card">
-        <h3 id="branchTitle">Sucursal</h3>
-        <div class="info">
-          <div>
-            <p class="muted"><strong>Dirección: </strong><span id="addr">—</span></p>
-            <p class="muted"><strong>Horarios: </strong><span id="hours">—</span></p>
-            <div class="actions">
-              <a class="btn" id="wapp" target="_blank" rel="noopener">WhatsApp</a>
-            </div>
-          </div>
-          <div style="min-height:200px">
-            <div id="mapEmbed" style="height:200px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;color:#eee;font-size:13px;background:rgba(255,255,255,.05)">Mapa (opcional)</div>
-          </div>
-        </div>
-
-        <hr style="border:0;border-top:1px solid rgba(255,255,255,.2);margin:16px 0"/>
-        <h3>Catálogo por categoría</h3>
-        <div class="category-tabs">
-          <button class="cat-tab active" data-cat="dama">Dama</button>
-          <button class="cat-tab" data-cat="caballero">Caballero</button>
-          <button class="cat-tab" data-cat="ninos">Niños</button>
-          <button class="cat-tab" data-cat="solares">Solares</button>
-        </div>
-
-        <div class="products" id="products"></div>
-
-        <div class="form-upload" id="uploadBlock">
-          <h4>Agregar producto</h4>
-          <select id="prodCat">
-            <option value="dama">Dama</option>
-            <option value="caballero">Caballero</option>
-            <option value="ninos">Niños</option>
-            <option value="solares">Solares</option>
-          </select>
-          <input type="text" id="prodName" placeholder="Nombre del producto" />
-          <input type="text" id="prodPrice" placeholder="Precio (ej: ₲ 250.000)" />
-          <input type="file" id="prodImage" accept="image/*" />
-          <button id="uploadBtn">Cargar producto a esta sucursal</button>
-          <div class="muted" style="font-size:12px">Las imágenes se guardan en el servidor y quedarán visibles para esta sucursal.</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>Contacto rápido</h3>
-        <form id="contactForm">
-          <label>Nombre<br/>
-            <input name="name" required placeholder="Tu nombre" />
-          </label>
-          <label>Mensaje<br/>
-            <textarea name="msg" required rows="4" placeholder="Quiero una cotización para…"></textarea>
-          </label>
-          <button class="btn" type="submit">Enviar por WhatsApp</button>
-        </form>
-        <hr style="border:0;border-top:1px solid rgba(255,255,255,.2);margin:16px 0"/>
-        <h3>Sobre Óptica Yolanda</h3>
-        <p class="muted">Especialistas en lentes, armazones y contacto. Examen visual y entrega rápida. Calidad al mejor precio.</p>
+        <div id="adminError" style="color:#ffb3b3;margin-top:10px;display:none">Contraseña incorrecta</div>
       </div>
     </div>
 
-    <footer>
-      <div>© <span id="year"></span> Óptica Yolanda. Todos los derechos reservados.</div>
-      <div class="muted">Backend Express + Multer (carga por sucursal, admin con contraseña).</div>
-    </footer>
+    <!-- Modal Editar -->
+    <div id="editModal">
+      <div class="modal-card">
+        <h3 style="margin:0 0 8px">Editar producto</h3>
+        <input id="editCode" placeholder="Código"/>
+        <input id="editName" placeholder="Nombre"/>
+        <input id="editPrice" placeholder="Precio"/>
+        <select id="editCat">
+          <option value="dama">Dama</option>
+          <option value="caballero">Caballero</option>
+          <option value="ninos">Niños</option>
+          <option value="solares">Solares</option>
+        </select>
+        <div class="muted" style="font-size:12px">Si no seleccionas imagen, se mantiene la actual.</div>
+        <input type="file" id="editImage" accept="image/*" />
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px">
+          <button id="editCancel" class="btn" type="button">Cancelar</button>
+          <button id="editSave" class="btn" type="button">Guardar cambios</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="tabs" id="tabs"></div>
+
+  <div class="grid">
+    <div class="card">
+      <h3 id="branchTitle">Sucursal</h3>
+      <div class="info">
+        <div>
+          <p class="muted"><strong>Dirección: </strong><span id="addr">—</span></p>
+          <p class="muted"><strong>Horarios: </strong><span id="hours">—</span></p>
+          <div class="actions">
+            <a class="btn" id="wapp" target="_blank" rel="noopener">WhatsApp</a>
+          </div>
+        </div>
+        <div style="min-height:200px">
+          <div id="mapEmbed" style="height:200px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;color:#eee;font-size:13px;background:rgba(255,255,255,.05)">Mapa (opcional)</div>
+        </div>
+      </div>
+
+      <hr style="border:0;border-top:1px solid rgba(255,255,255,.2);margin:16px 0"/>
+      <h3>Catálogo por categoría</h3>
+      <div class="category-tabs">
+        <button class="cat-tab active" data-cat="dama">Dama</button>
+        <button class="cat-tab" data-cat="caballero">Caballero</button>
+        <button class="cat-tab" data-cat="ninos">Niños</button>
+        <button class="cat-tab" data-cat="solares">Solares</button>
+      </div>
+
+      <div class="products" id="products"></div>
+
+      <div class="form-upload" id="uploadBlock">
+        <h4>Agregar producto</h4>
+        <select id="prodCat">
+          <option value="dama">Dama</option>
+          <option value="caballero">Caballero</option>
+          <option value="ninos">Niños</option>
+          <option value="solares">Solares</option>
+        </select>
+        <input type="text" id="prodCode" placeholder="Código (obligatorio)" />
+        <input type="text" id="prodName" placeholder="Nombre del producto" />
+        <input type="text" id="prodPrice" placeholder="Precio (ej: ₲ 250.000)" />
+        <input type="file" id="prodImage" accept="image/*" />
+        <button id="uploadBtn">Cargar producto a esta sucursal</button>
+        <div class="muted" style="font-size:12px">Las imágenes se guardan en el servidor y quedarán visibles para esta sucursal.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Contacto rápido</h3>
+      <form id="contactForm">
+        <label>Nombre<br/>
+          <input name="name" required placeholder="Tu nombre" />
+        </label>
+        <label>Mensaje<br/>
+          <textarea name="msg" required rows="4" placeholder="Quiero una cotización para…"></textarea>
+        </label>
+        <button class="btn" type="submit">Enviar por WhatsApp</button>
+      </form>
+      <hr style="border:0;border-top:1px solid rgba(255,255,255,.2);margin:16px 0"/>
+      <h3>Sobre Óptica Yolanda</h3>
+      <p class="muted">Especialistas en lentes, armazones y contacto. Examen visual y entrega rápida. Calidad al mejor precio.</p>
+    </div>
   </div>
+
+  <footer>
+    <div>© <span id="year"></span> Óptica Yolanda. Todos los derechos reservados.</div>
+    <div class="muted">Backend Express + Multer (admin con contraseña, edición y borrado).</div>
+  </footer>
+</div>
 
 <script>
 const BRANCHES = [
@@ -203,8 +236,50 @@ const uploadBlock = document.getElementById('uploadBlock');
 
 let current = BRANCHES[0].id;
 let currentCat = 'dama';
+let productosCache = [];
 
-// Render tabs sucursales
+// Admin
+const adminBtn = document.getElementById('adminBtn');
+const adminBadge = document.getElementById('adminBadge');
+const adminModal = document.getElementById('adminModal');
+const adminOk = document.getElementById('adminOk');
+const adminCancel = document.getElementById('adminCancel');
+const adminPass = document.getElementById('adminPass');
+const adminError = document.getElementById('adminError');
+
+function isAdmin(){ return localStorage.getItem('oy_admin') === '1'; }
+function setAdmin(v){ if(v){localStorage.setItem('oy_admin','1')} else {localStorage.removeItem('oy_admin')} refreshAdminUI(); }
+function refreshAdminUI(){
+  const on = isAdmin();
+  uploadBlock.style.display = on ? 'block' : 'none';
+  adminBadge.style.display = on ? 'inline-flex' : 'none';
+  adminBtn.textContent = on ? 'Salir de administrador' : 'Administrador';
+  // mostrar botones editar/borrar en tarjetas
+  Array.from(document.querySelectorAll('.actions-admin')).forEach(x=> x.style.display = on ? 'flex' : 'none');
+}
+refreshAdminUI();
+
+adminBtn.addEventListener('click', ()=>{
+  if(isAdmin()){ setAdmin(false); return; }
+  adminModal.style.display = 'flex';
+  adminPass.value = ''; adminError.style.display = 'none';
+  setTimeout(()=>adminPass.focus(), 50);
+});
+adminCancel.addEventListener('click', ()=> adminModal.style.display = 'none');
+adminOk.addEventListener('click', ()=>{
+  const guess = adminPass.value.trim();
+  if(!guess) return;
+  localStorage.setItem('oy_admin_key', guess);
+  adminModal.style.display = 'none';
+  setAdmin(true);
+});
+window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') adminModal.style.display='none'; });
+
+function adminHeader(){
+  return { 'x-admin-key': localStorage.getItem('oy_admin_key') || '' };
+}
+
+// Tabs sucursales
 function renderTabs(){
   tabsEl.innerHTML = '';
   BRANCHES.forEach(b => {
@@ -216,7 +291,6 @@ function renderTabs(){
   });
 }
 
-// Fetch productos
 async function fetchProductos(){
   try{
     const r = await fetch(`/productos/${current}`);
@@ -225,7 +299,28 @@ async function fetchProductos(){
   }catch(e){ return {productos:[]} }
 }
 
-// Render branch + filtro categoría
+function productCard(p){
+  const wrap = document.createElement('div');
+  wrap.className = 'product';
+  wrap.innerHTML = `
+    <img src="${p.img}" alt="${p.nombre}"/>
+    <div class="actions-admin">
+      <button class="btn small edit">Editar</button>
+      <button class="btn small delete">Eliminar</button>
+    </div>
+    <div class="pbd">
+      <div class="code">Código: ${p.codigo || '-'}</div>
+      <div style="font-weight:700">${p.nombre}</div>
+      <div class="price">${p.precio}</div>
+    </div>`;
+  // acciones admin
+  const act = wrap.querySelector('.actions-admin');
+  act.style.display = isAdmin() ? 'flex' : 'none';
+  wrap.querySelector('.edit').onclick = () => openEdit(p);
+  wrap.querySelector('.delete').onclick = () => delProduct(p);
+  return wrap;
+}
+
 async function renderBranch(){
   renderTabs();
   const b = BRANCHES.find(x=>x.id===current);
@@ -236,19 +331,11 @@ async function renderBranch(){
 
   productsEl.innerHTML = '';
   const data = await fetchProductos();
-  (data.productos||[])
+  productosCache = data.productos || [];
+  productosCache
     .filter(p => !p.categoria || p.categoria === currentCat)
-    .forEach(p => {
-      const card = document.createElement('div');
-      card.className = 'product';
-      card.innerHTML = `
-        <img src="${p.img}" alt="${p.nombre}" />
-        <div class="pbd">
-          <div style="font-weight:700">${p.nombre}</div>
-          <div class="price">${p.precio}</div>
-        </div>`;
-      productsEl.appendChild(card);
-    });
+    .forEach(p => productsEl.appendChild(productCard(p)));
+  refreshAdminUI();
 }
 
 // Contacto
@@ -273,64 +360,31 @@ categoryTabs.forEach(btn=>{
   });
 });
 
-// === ADMIN ===
-const adminBtn = document.getElementById('adminBtn');
-const adminBadge = document.getElementById('adminBadge');
-const adminModal = document.getElementById('adminModal');
-const adminOk = document.getElementById('adminOk');
-const adminCancel = document.getElementById('adminCancel');
-const adminPass = document.getElementById('adminPass');
-const adminError = document.getElementById('adminError');
-
-function isAdmin(){ return localStorage.getItem('oy_admin') === '1'; }
-function setAdmin(v){ if(v){localStorage.setItem('oy_admin','1')} else {localStorage.removeItem('oy_admin')} refreshAdminUI(); }
-function refreshAdminUI(){
-  const on = isAdmin();
-  uploadBlock.style.display = on ? 'block' : 'none';
-  adminBadge.style.display = on ? 'inline-flex' : 'none';
-  adminBtn.textContent = on ? 'Salir de administrador' : 'Administrador';
-}
-refreshAdminUI();
-
-adminBtn.addEventListener('click', ()=>{
-  if(isAdmin()){ setAdmin(false); return; }
-  adminModal.style.display = 'flex';
-  adminPass.value = ''; adminError.style.display = 'none';
-  setTimeout(()=>adminPass.focus(), 50);
-});
-adminCancel.addEventListener('click', ()=> adminModal.style.display = 'none');
-adminOk.addEventListener('click', ()=>{
-  const guess = adminPass.value.trim();
-  if(!guess) return;
-  localStorage.setItem('oy_admin_key', guess);
-  adminModal.style.display = 'none';
-  setAdmin(true);
-});
-window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') adminModal.style.display='none'; });
-
-// Subida protegida
+// Alta
 document.getElementById('uploadBtn').addEventListener('click', async ()=>{
   if(!isAdmin()){ alert('Solo el administrador puede cargar productos'); return; }
 
   const name = document.getElementById('prodName').value.trim();
   const price = document.getElementById('prodPrice').value.trim();
-  const cat = document.getElementById('prodCat').value;
+  const code = document.getElementById('prodCode').value.trim();
+  const cat  = document.getElementById('prodCat').value;
   const file = document.getElementById('prodImage').files[0];
-  if(!name || !price || !file){ alert('Completa categoría, nombre, precio e imagen'); return; }
+  if(!code || !name || !price || !file){ alert('Completa código, nombre, precio e imagen'); return; }
 
   const fd = new FormData();
+  fd.append('codigo', code);
   fd.append('nombre', name);
   fd.append('precio', price);
   fd.append('categoria', cat);
   fd.append('imagen', file);
 
-  const key = localStorage.getItem('oy_admin_key') || '';
-  const r = await fetch(`/upload/${current}`, { method:'POST', body: fd, headers:{ 'x-admin-key': key } });
+  const r = await fetch(`/upload/${current}`, { method:'POST', body: fd, headers: adminHeader() });
   if(r.ok){
+    document.getElementById('prodCode').value='';
     document.getElementById('prodName').value='';
     document.getElementById('prodPrice').value='';
     document.getElementById('prodImage').value='';
-    currentCat = cat; // mostrar lo recién cargado
+    currentCat = cat;
     categoryTabs.forEach(b=>b.classList.toggle('active', b.dataset.cat===cat));
     renderBranch();
   }else{
@@ -338,6 +392,60 @@ document.getElementById('uploadBtn').addEventListener('click', async ()=>{
   }
 });
 
+/* === EDITAR / ELIMINAR === */
+const editModal = document.getElementById('editModal');
+const editCode  = document.getElementById('editCode');
+const editName  = document.getElementById('editName');
+const editPrice = document.getElementById('editPrice');
+const editCat   = document.getElementById('editCat');
+const editImage = document.getElementById('editImage');
+const editCancel= document.getElementById('editCancel');
+const editSave  = document.getElementById('editSave');
+
+let editingId = null;
+
+function openEdit(p){
+  if(!isAdmin()){ alert('Solo administrador'); return; }
+  editingId = p.id;
+  editCode.value = p.codigo || '';
+  editName.value = p.nombre || '';
+  editPrice.value = p.precio || '';
+  editCat.value = p.categoria || 'dama';
+  editImage.value = '';
+  editModal.style.display = 'flex';
+}
+
+editCancel.onclick = ()=>{ editModal.style.display='none'; editingId=null; };
+
+editSave.onclick = async ()=>{
+  if(!editingId) return;
+  const fd = new FormData();
+  if(editCode.value.trim())  fd.append('codigo',   editCode.value.trim());
+  if(editName.value.trim())  fd.append('nombre',   editName.value.trim());
+  if(editPrice.value.trim()) fd.append('precio',   editPrice.value.trim());
+  if(editCat.value)          fd.append('categoria', editCat.value);
+  if(editImage.files[0])     fd.append('imagen',   editImage.files[0]);
+
+  const r = await fetch(`/producto/${current}/${editingId}`, { method:'PUT', body: fd, headers: adminHeader() });
+  if(r.ok){
+    editModal.style.display = 'none';
+    const updated = await r.json();
+    currentCat = updated.producto.categoria || currentCat;
+    categoryTabs.forEach(b=>b.classList.toggle('active', b.dataset.cat===currentCat));
+    renderBranch();
+  }else{
+    alert('No se pudo editar. ' + (await r.text()));
+  }
+};
+
+async function delProduct(p){
+  if(!isAdmin()){ alert('Solo administrador'); return; }
+  if(!confirm(`Eliminar "${p.nombre}" (código: ${p.codigo || '-'})?`)) return;
+  const r = await fetch(`/producto/${current}/${p.id}`, { method:'DELETE', headers: adminHeader() });
+  if(r.ok){ renderBranch(); } else { alert('No se pudo eliminar. ' + (await r.text())); }
+}
+
+// Init
 document.getElementById('year').textContent = new Date().getFullYear();
 renderBranch();
 </script>
