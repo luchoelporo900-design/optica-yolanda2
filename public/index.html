@@ -9,7 +9,9 @@
 :root{
   --rojo:#8b0000; --negro:#000; --blanco:#fff; --gris:#ccc;
   --oro:#ffd700; --oro1:#fff2a6; --oro2:#ffd34d; --oro3:#caa231; --oro4:#8f6b00;
+  --green:#22c55e; --danger:#ff4040;
 }
+*{box-sizing:border-box}
 body{
   margin:0; font-family:"Poppins",system-ui,Segoe UI,Roboto,Ubuntu,Arial;
   background:
@@ -39,7 +41,6 @@ header h1{
   background-size:200% 100%; animation:goldSparkle 6s linear infinite; text-shadow:0 1px 1px rgba(0,0,0,.35);
 }
 @keyframes goldSparkle{0%{background-position:0% 0}100%{background-position:200% 0}}
-@media (prefers-reduced-motion:reduce){header h1{animation:none;background-position:50% 0}}
 .subtitle{font-size:14px;color:var(--gris)}
 .top-actions{margin-top:8px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 .badge{display:none;background:#14b814;color:#000;padding:6px 10px;border-radius:999px;font-weight:700}
@@ -83,9 +84,19 @@ header h1{
 .code{font-size:12px;opacity:.8;margin-bottom:3px}
 .price{color:var(--oro2);font-weight:800;margin-top:4px;text-shadow:0 1px 0 rgba(0,0,0,.35)}
 .price-old{opacity:.7;text-decoration:line-through;margin-right:6px}
-.badge-offer{position:absolute;top:8px;left:8px;background:#ff4040;color:#fff;padding:4px 8px;border-radius:8px;font-size:12px;font-weight:800;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.badge-offer{position:absolute;top:8px;left:8px;background:var(--danger);color:#fff;padding:4px 8px;border-radius:8px;font-size:12px;font-weight:800;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.badge-discount{position:absolute;top:8px;right:8px;background:var(--green);color:#08210f;font-weight:900;font-size:12px;padding:4px 8px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.35)}
 .actions-admin{position:absolute;top:8px;right:8px;display:none;gap:6px}
 .actions-admin .small{font-size:12px;padding:6px 8px;border-radius:8px}
+
+/* Favoritos */
+.fav-btn{
+  position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.35);
+  color:#fff;border-radius:999px;padding:6px 9px;cursor:pointer;font-weight:800
+}
+.fav-btn.active{background:#ff4d7e;border-color:#ff4d7e}
+.fav-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between;margin:8px 0 6px}
+.fav-counter{background:#ff4d7e;color:#fff;border-radius:999px;padding:6px 10px;font-weight:800}
 
 /* Form */
 .form-upload{margin-top:10px}
@@ -96,9 +107,6 @@ header h1{
 .form-upload button{background:linear-gradient(180deg,var(--oro2),var(--oro3));color:#201a00;border:1px solid rgba(255,255,255,.65)}
 input,textarea{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:10px;color:#fff;width:100%;padding:10px}
 input::placeholder,textarea::placeholder{color:#d6d6d6}
-
-/* Búsqueda + export */
-.tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between;margin:8px 0 6px}
 
 /* Section headers in "Todos" */
 .cat-header{
@@ -156,7 +164,7 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
           <option value="dama">Dama</option>
           <option value="caballero">Caballero</option>
           <option value="clipon_dama">Clipon Dama</option>
-          <option value="clipon_hombre">Clipon Hombre</option>
+          <option value="clipon_caballero">Clipon Caballero</option>
           <option value="ninos">Niños</option>
           <option value="solares">Lentes de sol</option>
         </select>
@@ -202,19 +210,22 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
         <button class="cat-tab" data-cat="dama">Dama</button>
         <button class="cat-tab" data-cat="caballero">Caballero</button>
         <button class="cat-tab" data-cat="clipon_dama">Clipon Dama</button>
-        <button class="cat-tab" data-cat="clipon_hombre">Clipon Hombre</button>
+        <button class="cat-tab" data-cat="clipon_caballero">Clipon Caballero</button>
         <button class="cat-tab" data-cat="ninos">Niños</button>
         <button class="cat-tab" data-cat="solares">Lentes de sol</button>
         <button class="cat-tab" data-cat="ofertas">Ofertas</button>
+        <button class="cat-tab" data-cat="favoritos">Favoritos ❤️</button>
       </div>
 
-      <!-- Búsqueda y export -->
-      <div class="tools">
+      <!-- Búsqueda / Export / Favoritos -->
+      <div class="fav-tools">
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <input id="searchCode" placeholder="Buscar por código..." style="max-width:220px" />
           <button id="clearSearch" class="btn" type="button">Limpiar</button>
         </div>
-        <div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span id="favCounter" class="fav-counter">0 favoritos</span>
+          <button id="sendFav" class="btn" type="button">Enviar favoritos por WhatsApp</button>
           <button id="exportCsv" class="btn" type="button">Exportar CSV</button>
         </div>
       </div>
@@ -228,7 +239,7 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
             <option value="dama">Dama</option>
             <option value="caballero">Caballero</option>
             <option value="clipon_dama">Clipon Dama</option>
-            <option value="clipon_hombre">Clipon Hombre</option>
+            <option value="clipon_caballero">Clipon Caballero</option>
             <option value="ninos">Niños</option>
             <option value="solares">Lentes de sol</option>
           </select>
@@ -237,10 +248,10 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
           </label>
           <input type="text" id="prodPromo" placeholder="Precio promo (si oferta)" style="max-width:180px"/>
         </div>
-        <input type="text" id="prodCode" placeholder="Código (obligatorio)" />
-        <input type="text" id="prodName" placeholder="Nombre del producto" />
-        <input type="text" id="prodPrice" placeholder="Precio (ej: ₲ 250.000)" />
-        <input type="file" id="prodImage" accept="image/*" />
+        <input type="text"  id="prodCode"  placeholder="Código (obligatorio)" />
+        <input type="text"  id="prodName"  placeholder="Nombre del producto" />
+        <input type="text"  id="prodPrice" placeholder="Precio (ej: ₲ 250.000)" />
+        <input type="file"  id="prodImage" accept="image/*" />
         <button id="uploadBtn">Cargar producto a esta sucursal</button>
         <div class="muted" style="font-size:12px">Las imágenes se guardan en el servidor y quedarán visibles para esta sucursal.</div>
       </div>
@@ -265,30 +276,32 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
 
   <footer>
     <div>© <span id="year"></span> Óptica Yolanda. Todos los derechos reservados.</div>
-    <div class="muted">Express + Multer • Admin con edición, ofertas y export CSV.</div>
+    <div class="muted">Express + Multer • Admin con edición, ofertas, export y favoritos.</div>
   </footer>
 </div>
 
 <script>
-// Datos de sucursales
+// ===== Datos de sucursales
 const BRANCHES = [
   { id:'central',  nombre:'Óptica Yolanda Central',  direccion:'Azara 1167 casi Brasil', horarios:'08:00 a 18:00', whatsapp:'595986315354' },
   { id:'fernando', nombre:'Óptica Yolanda Fernando de la Mora', direccion:'Ruta Mcal. José Estigarribia esquina 15 de Mayo', horarios:'08:00 a 18:00', whatsapp:'595983989860' },
   { id:'caacupe',  nombre:'Óptica Yolanda Caacupé', direccion:'Ruta del Maestro 1807 esquina Independencia Nacional', horarios:'08:00 a 18:00', whatsapp:'595972760646' }
 ];
 
-const CATS = ["dama","caballero","clipon_dama","clipon_hombre","ninos","solares"];
+const CATS = ["dama","caballero","clipon_dama","clipon_caballero","ninos","solares"];
 const CAT_LABEL = {
   dama: "Dama",
   caballero: "Caballero",
   clipon_dama: "Clipon Dama",
-  clipon_hombre: "Clipon Hombre",
+  clipon_caballero: "Clipon Caballero",
   ninos: "Niños",
   solares: "Lentes de sol",
   ofertas: "Ofertas",
+  favoritos: "Favoritos",
   todos: "Todos"
 };
 
+// ===== Referencias UI
 const tabsEl = document.getElementById('tabs');
 const productsEl = document.getElementById('products');
 const branchTitle = document.getElementById('branchTitle');
@@ -301,18 +314,20 @@ const searchCode = document.getElementById('searchCode');
 const clearSearch = document.getElementById('clearSearch');
 const exportCsv = document.getElementById('exportCsv');
 
+const favCounter = document.getElementById('favCounter');
+const sendFav = document.getElementById('sendFav');
+
 let current = BRANCHES[0].id;
 let currentCat = 'todos';
 let productosCache = [];
 
-// Admin
+// ===== Admin
 const adminBtn = document.getElementById('adminBtn');
 const adminBadge = document.getElementById('adminBadge');
 const adminModal = document.getElementById('adminModal');
 const adminOk = document.getElementById('adminOk');
 const adminCancel = document.getElementById('adminCancel');
 const adminPass = document.getElementById('adminPass');
-const adminError = document.getElementById('adminError');
 
 function isAdmin(){ return localStorage.getItem('oy_admin') === '1'; }
 function setAdmin(v){ if(v){localStorage.setItem('oy_admin','1')} else {localStorage.removeItem('oy_admin')} refreshAdminUI(); }
@@ -328,7 +343,7 @@ function adminHeader(){ return { 'x-admin-key': localStorage.getItem('oy_admin_k
 adminBtn.addEventListener('click', ()=>{
   if(isAdmin()){ setAdmin(false); return; }
   adminModal.style.display = 'flex';
-  adminPass.value = ''; adminError.style.display = 'none';
+  adminPass.value = '';
   setTimeout(()=>adminPass.focus(), 50);
 });
 adminCancel.addEventListener('click', ()=> adminModal.style.display = 'none');
@@ -341,7 +356,7 @@ adminOk.addEventListener('click', ()=>{
 });
 window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') adminModal.style.display='none'; });
 
-// UI sucursales
+// ===== Tabs sucursales
 function renderTabs(){
   tabsEl.innerHTML = '';
   BRANCHES.forEach(b => {
@@ -353,6 +368,7 @@ function renderTabs(){
   });
 }
 
+// ===== Helpers
 async function fetchProductos(){
   try{
     const r = await fetch(`/productos/${current}`);
@@ -361,23 +377,71 @@ async function fetchProductos(){
   }catch(e){ return {productos:[]} }
 }
 
+function parseGs(val){
+  // acepta "₲ 250.000", "250000", "250,000", etc.
+  const s = (val ?? '').toString().trim();
+  if(!s) return 0;
+  const n = s.replace(/[^\d,\.]/g,'').replace(/\./g,'').replace(/,/g,'');
+  return Number(n) || 0;
+}
+
+function discountPercent(p){
+  const base = parseGs(p.precio);
+  const promo = parseGs(p.precioPromo);
+  if(!p.oferta || !base || !promo || promo >= base) return 0;
+  return Math.max(1, Math.round((1 - (promo/base)) * 100)); // mínimo 1%
+}
+
+// ===== Favoritos (por sucursal en localStorage)
+function favKey(){ return `oy_favs_${current}`; }
+function getFavs(){
+  try { return JSON.parse(localStorage.getItem(favKey())) || []; }
+  catch { return []; }
+}
+function setFavs(arr){ localStorage.setItem(favKey(), JSON.stringify(arr)); updateFavCounter(); }
+function isFav(id){ return getFavs().some(f => f.id === id); }
+function toggleFav(p){
+  const favs = getFavs();
+  const i = favs.findIndex(f => f.id === p.id);
+  if(i >= 0) favs.splice(i,1);
+  else favs.push({ id:p.id, codigo:p.codigo, nombre:p.nombre, precio:p.precio, precioPromo:p.precioPromo, oferta:p.oferta });
+  setFavs(favs);
+  renderBranch();
+}
+function updateFavCounter(){
+  const n = getFavs().length;
+  favCounter.textContent = `${n} favorito${n===1?'':'s'}`;
+}
+
+// ===== Card de producto
 function productCard(p){
+  const pct = discountPercent(p);
+
   const wrap = document.createElement('div');
   wrap.className = 'product';
   wrap.innerHTML = `
     ${p.oferta ? '<div class="badge-offer">OFERTA</div>' : ''}
+    ${pct ? `<div class="badge-discount">-${pct}%</div>` : ''}
     <img src="${p.img}" alt="${p.nombre}" loading="lazy"/>
     <div class="actions-admin">
       <button class="btn small edit">Editar</button>
       <button class="btn small delete">Eliminar</button>
     </div>
+    <button class="fav-btn ${isFav(p.id)?'active':''}" title="Agregar a favoritos">❤</button>
     <div class="pbd">
       <div class="code">Código: ${p.codigo || '-'}</div>
       <div style="font-weight:700">${p.nombre}</div>
       <div class="price">
-        ${p.oferta && p.precioPromo ? `<span class="price-old">${p.precio}</span> <span>${p.precioPromo}</span>` : `${p.precio}`}
+        ${p.oferta && p.precioPromo
+          ? `<span class="price-old">${p.precio}</span> <span>${p.precioPromo}</span> <span style="font-size:12px;opacity:.9">(-${pct}%)</span>`
+          : `${p.precio}`
+        }
       </div>
     </div>`;
+
+  // Acciones
+  wrap.querySelector('.fav-btn').onclick = () => toggleFav(p);
+
   const act = wrap.querySelector('.actions-admin');
   act.style.display = isAdmin() ? 'flex' : 'none';
   wrap.querySelector('.edit').onclick = () => openEdit(p);
@@ -385,6 +449,7 @@ function productCard(p){
   return wrap;
 }
 
+// ===== Render principal
 async function renderBranch(){
   renderTabs();
   const b = BRANCHES.find(x=>x.id===current);
@@ -406,36 +471,36 @@ async function renderBranch(){
   }
 
   if (currentCat === 'todos') {
-    // Mostrar ofertas primero
+    // Ofertas primero
     const ofertas = productosCache.filter(p => p.oferta);
     if (ofertas.length){
       const h = document.createElement('div');
-      h.className = 'cat-header';
-      h.textContent = "Ofertas";
-      productsEl.appendChild(h);
-      renderList(ofertas);
+      h.className = 'cat-header'; h.textContent = "Ofertas";
+      productsEl.appendChild(h); renderList(ofertas);
     }
-    // Luego por categorías
+    // Resto por categoría
     CATS.forEach(cat => {
       const subset = productosCache.filter(p => (p.categoria || '') === cat);
       if (!subset.length) return;
       const h = document.createElement('div');
-      h.className = 'cat-header';
-      h.textContent = CAT_LABEL[cat] || cat;
-      productsEl.appendChild(h);
-      renderList(subset);
+      h.className = 'cat-header'; h.textContent = CAT_LABEL[cat] || cat;
+      productsEl.appendChild(h); renderList(subset);
     });
   } else if (currentCat === 'ofertas') {
     renderList(productosCache.filter(p => p.oferta));
+  } else if (currentCat === 'favoritos') {
+    const favs = getFavs().map(f => productosCache.find(p => p.id === f.id)).filter(Boolean);
+    renderList(favs);
   } else {
     const subset = productosCache.filter(p => (p.categoria || '') === currentCat);
     renderList(subset);
   }
 
   refreshAdminUI();
+  updateFavCounter();
 }
 
-// Tabs categorías
+// ===== Eventos UI
 document.getElementById('catTabs').addEventListener('click', (e)=>{
   const btn = e.target.closest('.cat-tab');
   if(!btn) return;
@@ -445,7 +510,6 @@ document.getElementById('catTabs').addEventListener('click', (e)=>{
   renderBranch();
 });
 
-// Contacto
 document.getElementById('contactForm').addEventListener('submit', (e)=>{
   e.preventDefault();
   const b = BRANCHES.find(x=>x.id===current);
@@ -455,29 +519,37 @@ document.getElementById('contactForm').addEventListener('submit', (e)=>{
   window.open(`https://wa.me/${b.whatsapp}?text=Hola,%20soy%20${name}.%20${msg}`, '_blank');
 });
 
-// Buscar + limpiar
 searchCode.addEventListener('input', ()=> renderBranch());
 clearSearch.addEventListener('click', ()=>{ searchCode.value=''; renderBranch(); });
 
-// Export CSV (respeta sucursal y categoría excepto "todos" que exporta todo)
 exportCsv.addEventListener('click', ()=>{
-  const url = currentCat === 'todos'
+  const url = currentCat === 'todos' || currentCat === 'favoritos'
     ? `/export/${current}.csv`
     : `/export/${current}.csv?cat=${encodeURIComponent(currentCat)}`
   window.open(url, '_blank');
 });
 
-// Alta
+// Enviar favoritos por WhatsApp
+sendFav.addEventListener('click', ()=>{
+  const b = BRANCHES.find(x=>x.id===current);
+  const favs = getFavs();
+  if(!favs.length){ alert('No hay favoritos. Agrega con el corazón ❤'); return; }
+  const lines = favs.map(f => `• ${f.codigo || '-'} — ${f.nombre || ''}${(f.oferta && f.precioPromo)?` (Promo: ${f.precioPromo})`:''}`);
+  const text = encodeURIComponent(`Hola, me interesan estos productos:\n\n${lines.join('\n')}\n\nSucursal: ${b.nombre}`);
+  window.open(`https://wa.me/${b.whatsapp}?text=${text}`, '_blank');
+});
+
+// ===== Alta
 document.getElementById('uploadBtn').addEventListener('click', async ()=>{
   if(!isAdmin()){ alert('Solo el administrador puede cargar productos'); return; }
 
   const name = document.getElementById('prodName').value.trim();
   const price = document.getElementById('prodPrice').value.trim();
-  const code = document.getElementById('prodCode').value.trim();
-  const cat  = document.getElementById('prodCat').value;
+  const code  = document.getElementById('prodCode').value.trim();
+  const cat   = document.getElementById('prodCat').value;
   const offer = document.getElementById('prodOffer').checked;
   const promo = document.getElementById('prodPromo').value.trim();
-  const file = document.getElementById('prodImage').files[0];
+  const file  = document.getElementById('prodImage').files[0];
 
   if(!code || !name || !price || !file){ alert('Completa código, nombre, precio e imagen'); return; }
   if(offer && !promo){ if(!confirm('Marcaste OFERTA sin precio promo. ¿Continuar?')) return; }
@@ -565,6 +637,7 @@ async function delProduct(p){
 
 // Init
 document.getElementById('year').textContent = new Date().getFullYear();
+updateFavCounter();
 renderBranch();
 </script>
 </body>
