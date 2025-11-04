@@ -28,12 +28,6 @@ header img{
   box-shadow:0 4px 20px rgba(0,0,0,.4);transition: transform .4s ease, box-shadow .4s ease;
 }
 header img:hover{transform:scale(1.03);box-shadow:0 6px 25px rgba(255,215,0,.4)}
-header img::after{
-  content:""; position:absolute; top:-120%; left:-75%; width:50%; height:300%;
-  background:linear-gradient(120deg, rgba(255,255,255,.05), rgba(255,255,255,.3) 50%, rgba(255,255,255,.05));
-  transform:skewX(-25deg); animation:shineMove 6s ease-in-out infinite; pointer-events:none; border-radius:inherit;
-}
-@keyframes shineMove{0%{top:-120%;left:-75%}50%{top:-50%;left:100%}100%{top:120%;left:200%}}
 header h1{
   margin:0;font-size:28px;letter-spacing:1px;font-weight:700;
   background:linear-gradient(135deg,var(--oro1),var(--oro2) 30%,var(--oro3) 55%,var(--oro1) 70%,var(--oro4) 100%);
@@ -79,7 +73,7 @@ header h1{
 @media (max-width:560px){.products{grid-template-columns:1fr}}
 .product{position:relative;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:12px;overflow:hidden;transition:transform .2s,box-shadow .2s}
 .product:hover{transform:translateY(-3px);box-shadow:0 5px 20px rgba(255,215,0,.25)}
-.product img{width:100%;height:160px;object-fit:cover;display:block}
+.product img{width:100%;height:180px;object-fit:cover;display:block;cursor:pointer}
 .product .pbd{padding:12px}
 .code{font-size:12px;opacity:.8;margin-bottom:3px}
 .price{color:var(--oro2);font-weight:800;margin-top:4px;text-shadow:0 1px 0 rgba(0,0,0,.35)}
@@ -113,7 +107,7 @@ header h1{
 }
 
 /* Footer */
-footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+footer{margin:26px 0 8px}
 
 /* Modales */
 #adminModal,#editModal,#vendorModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;align-items:center;justify-content:center;padding:16px}
@@ -122,6 +116,23 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
 .vendor-btn{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#1a1a1a;border:1px solid rgba(255,255,255,.25);border-radius:10px;padding:10px 12px;cursor:pointer}
 .vendor-btn:hover{filter:brightness(1.05)}
 .vendor-phone{opacity:.8;font-size:12px}
+
+/* === Modal Zoom de imagen === */
+#imgZoomModal{
+  display:none; position:fixed; inset:0; z-index:99999;
+  background:rgba(0,0,0,.85); align-items:center; justify-content:center;
+}
+#imgZoomModal.open{ display:flex; }
+#imgZoomModal img{
+  max-width:92vw; max-height:85vh; border-radius:12px;
+  box-shadow:0 0 30px rgba(0,0,0,.6);
+}
+#imgZoomModal .img-zoom-close{
+  position:absolute; top:16px; right:20px;
+  background:#ff4040; color:#fff; border:none; cursor:pointer;
+  font-weight:800; font-size:20px; border-radius:8px; padding:6px 12px;
+}
+#imgZoomModal .img-zoom-close:hover{ filter:brightness(1.1); }
 </style>
 </head>
 <body>
@@ -272,17 +283,22 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
     </div>
   </div>
 
- <footer>
-  <div style="width:100%;text-align:center;font-weight:800;color:#ffd34d;
-              text-shadow:0 0 10px rgba(255,215,0,.4),0 0 20px rgba(255,215,0,.2)">
-    ÓPTICA YOLANDA – PY
-  </div>
-</footer>
+  <footer>
+    <div style="width:100%;text-align:center;font-weight:800;color:#ffd34d;
+                text-shadow:0 0 10px rgba(255,215,0,.4),0 0 20px rgba(255,215,0,.2)">
+      ÓPTICA YOLANDA – PY
+    </div>
+  </footer>
+</div>
 
+<!-- Modal de imagen ampliada -->
+<div id="imgZoomModal" aria-hidden="true">
+  <button id="imgZoomClose" class="img-zoom-close" type="button">× Cerrar</button>
+  <img id="imgZoomImg" alt="Vista ampliada" />
 </div>
 
 <script>
-// ===== Datos de sucursales con vendedoras y mapQuery
+/* ===================== DATOS ===================== */
 const BRANCHES = [
   {
     id:'central',
@@ -320,18 +336,11 @@ const BRANCHES = [
 
 const CATS = ["dama","caballero","clipon_dama","clipon_caballero","ninos","solares"];
 const CAT_LABEL = {
-  dama: "Dama",
-  caballero: "Caballero",
-  clipon_dama: "Clipon Dama",
-  clipon_caballero: "Clipon Caballero",
-  ninos: "Niños",
-  solares: "Lentes de sol",
-  ofertas: "Ofertas",
-  favoritos: "Favoritos",
-  todos: "Todos"
+  dama:"Dama", caballero:"Caballero", clipon_dama:"Clipon Dama", clipon_caballero:"Clipon Caballero",
+  ninos:"Niños", solares:"Lentes de sol", ofertas:"Ofertas", favoritos:"Favoritos", todos:"Todos"
 };
 
-// ===== Referencias UI
+/* ===================== REFERENCIAS ===================== */
 const tabsEl = document.getElementById('tabs');
 const productsEl = document.getElementById('products');
 const branchTitle = document.getElementById('branchTitle');
@@ -339,10 +348,8 @@ const addr = document.getElementById('addr');
 const hours = document.getElementById('hours');
 const wappBtn = document.getElementById('wapp');
 const uploadBlock = document.getElementById('uploadBlock');
-
 const searchCode = document.getElementById('searchCode');
 const clearSearch = document.getElementById('clearSearch');
-
 const favCounter = document.getElementById('favCounter');
 const copyFav = document.getElementById('copyFav');
 const sendFav = document.getElementById('sendFav');
@@ -351,7 +358,7 @@ let current = BRANCHES[0].id;
 let currentCat = 'todos';
 let productosCache = [];
 
-// ===== Admin
+/* ===================== ADMIN ===================== */
 const adminBtn = document.getElementById('adminBtn');
 const adminBadge = document.getElementById('adminBadge');
 const adminModal = document.getElementById('adminModal');
@@ -386,7 +393,7 @@ adminOk.addEventListener('click', ()=>{
 });
 window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') adminModal.style.display='none'; });
 
-// ===== Tabs sucursales
+/* ===================== TABS SUCURSALES ===================== */
 function renderTabs(){
   tabsEl.innerHTML = '';
   BRANCHES.forEach(b => {
@@ -398,7 +405,7 @@ function renderTabs(){
   });
 }
 
-// ===== Helpers
+/* ===================== HELPERS ===================== */
 async function fetchProductos(){
   try{
     const r = await fetch(`/productos/${current}`);
@@ -406,14 +413,12 @@ async function fetchProductos(){
     return await r.json();
   }catch(e){ return {productos:[]} }
 }
-
 function parseGs(val){
   const s = (val ?? '').toString().trim();
   if(!s) return 0;
   const n = s.replace(/[^\d,\.]/g,'').replace(/\./g,'').replace(/,/g,'');
   return Number(n) || 0;
 }
-
 function discountPercent(p){
   const base = parseGs(p.precio);
   const promo = parseGs(p.precioPromo);
@@ -421,12 +426,9 @@ function discountPercent(p){
   return Math.max(1, Math.round((1 - (promo/base)) * 100));
 }
 
-// ===== Favoritos (por sucursal en localStorage)
+/* ===================== FAVORITOS ===================== */
 function favKey(){ return `oy_favs_${current}`; }
-function getFavs(){
-  try { return JSON.parse(localStorage.getItem(favKey())) || []; }
-  catch { return []; }
-}
+function getFavs(){ try { return JSON.parse(localStorage.getItem(favKey())) || []; } catch { return []; } }
 function setFavs(arr){ localStorage.setItem(favKey(), JSON.stringify(arr)); updateFavCounter(); }
 function isFav(id){ return getFavs().some(f => f.id === id); }
 function toggleFav(p){
@@ -442,11 +444,10 @@ function updateFavCounter(){
   favCounter.textContent = `${n} favorito${n===1?'':'s'}`;
 }
 
-// ===== Vendor modal
+/* ===================== VENDEDORAS ===================== */
 const vendorModal = document.getElementById('vendorModal');
 const vendorList  = document.getElementById('vendorList');
 const vendorCancel= document.getElementById('vendorCancel');
-
 vendorCancel.onclick = ()=>{ vendorModal.style.display='none'; };
 
 function openVendorPicker(onPick){
@@ -459,7 +460,7 @@ function openVendorPicker(onPick){
     btn.innerHTML = `<span>${v.name}</span><span class="vendor-phone">${v.phone}</span>`;
     btn.onclick = ()=>{
       vendorModal.style.display = 'none';
-      const num = (v.phone || '').replace(/\s+/g,'').replace(/^\+/, ''); // sin '+'
+      const num = (v.phone || '').replace(/\s+/g,'').replace(/^\+/, '');
       if(onPick) onPick(num);
     };
     vendorList.appendChild(btn);
@@ -467,7 +468,7 @@ function openVendorPicker(onPick){
   vendorModal.style.display = 'flex';
 }
 
-// ===== Card de producto
+/* ===================== PRODUCT CARD ===================== */
 function productCard(p){
   const pct = discountPercent(p);
   const discClass = pct>=30 ? 'disc-30' : (pct>=20 ? 'disc-20' : (pct>=10 ? 'disc-10' : ''));
@@ -503,7 +504,7 @@ function productCard(p){
   return wrap;
 }
 
-// ===== Render principal
+/* ===================== RENDER PRINCIPAL ===================== */
 async function renderBranch(){
   renderTabs();
   const b = BRANCHES.find(x=>x.id===current);
@@ -511,7 +512,7 @@ async function renderBranch(){
   addr.textContent = b.direccion;
   hours.textContent = b.horarios;
 
-  // Mapa embebido + botones (usa mapQuery)
+  // Mapa
   const mapDiv = document.getElementById('mapEmbed');
   let q = b.mapQuery ? encodeURIComponent(b.mapQuery) : null;
   if (q) {
@@ -529,7 +530,7 @@ async function renderBranch(){
     mapDiv.textContent = "Mapa no disponible";
   }
 
-  // Catálogo
+  // Productos
   productsEl.innerHTML = '';
   const data = await fetchProductos();
   productosCache = data.productos || [];
@@ -570,7 +571,7 @@ async function renderBranch(){
   updateFavCounter();
 }
 
-// ===== Eventos UI
+/* ===================== EVENTOS UI ===================== */
 document.getElementById('catTabs').addEventListener('click', (e)=>{
   const btn = e.target.closest('.cat-tab');
   if(!btn) return;
@@ -603,7 +604,6 @@ copyFav.addEventListener('click', async ()=>{
     await navigator.clipboard.writeText(text);
     alert('Lista copiada al portapapeles ✅');
   }catch(e){
-    // Fallback
     const ta = document.createElement('textarea');
     ta.value = text; document.body.appendChild(ta); ta.select();
     try{ document.execCommand('copy'); alert('Lista copiada al portapapeles ✅'); }
@@ -627,7 +627,7 @@ sendFav.addEventListener('click', ()=>{
   });
 });
 
-// ===== Alta
+/* ===================== ALTA / EDITAR / ELIMINAR ===================== */
 document.getElementById('uploadBtn').addEventListener('click', async ()=>{
   if(!isAdmin()){ alert('Solo el administrador puede cargar productos'); return; }
 
@@ -667,7 +667,6 @@ document.getElementById('uploadBtn').addEventListener('click', async ()=>{
   }
 });
 
-/* === EDITAR / ELIMINAR === */
 const editModal = document.getElementById('editModal');
 const editCode  = document.getElementById('editCode');
 const editName  = document.getElementById('editName');
@@ -723,9 +722,28 @@ async function delProduct(p){
   if(r.ok){ renderBranch(); } else { alert('No se pudo eliminar. ' + (await r.text())); }
 }
 
-// Init
-document.getElementById('year').textContent = new Date().getFullYear();
-updateFavCounter();
+/* ===================== ZOOM DE IMAGEN ===================== */
+(function(){
+  const products = document.getElementById('products');
+  const modal  = document.getElementById('imgZoomModal');
+  const imgTag = document.getElementById('imgZoomImg');
+  const close  = document.getElementById('imgZoomClose');
+
+  products.addEventListener('click', (e)=>{
+    const img = e.target.closest('.product img');
+    if(!img) return;
+    imgTag.src = img.src;
+    modal.classList.add('open');
+  });
+
+  function closeModal(){ modal.classList.remove('open'); imgTag.src=''; }
+  close.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e)=>{ if(e.target===modal) closeModal(); });
+  window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
+})();
+
+/* ===================== INIT ===================== */
+document.getElementById('adminError'); // placeholder (mantenemos referencia limpia)
 renderBranch();
 </script>
 </body>
