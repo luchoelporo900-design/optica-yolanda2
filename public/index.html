@@ -82,20 +82,34 @@ header h1{
 .product .pbd{padding:12px}
 .code{font-size:12px;opacity:.8;margin-bottom:3px}
 .price{color:var(--oro2);font-weight:800;margin-top:4px;text-shadow:0 1px 0 rgba(0,0,0,.35)}
+.price-old{opacity:.7;text-decoration:line-through;margin-right:6px}
+.badge-offer{position:absolute;top:8px;left:8px;background:#ff4040;color:#fff;padding:4px 8px;border-radius:8px;font-size:12px;font-weight:800;box-shadow:0 2px 8px rgba(0,0,0,.35)}
 .actions-admin{position:absolute;top:8px;right:8px;display:none;gap:6px}
 .actions-admin .small{font-size:12px;padding:6px 8px;border-radius:8px}
 
 /* Form */
 .form-upload{margin-top:10px}
-.form-upload input,.form-upload select,.form-upload button{
+.form-upload input,.form-upload select,.form-upload button,.form-upload label{
   padding:10px;margin:5px 0;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff
 }
+.form-upload .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .form-upload button{background:linear-gradient(180deg,var(--oro2),var(--oro3));color:#201a00;border:1px solid rgba(255,255,255,.65)}
 input,textarea{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:10px;color:#fff;width:100%;padding:10px}
 input::placeholder,textarea::placeholder{color:#d6d6d6}
 
-/* Barra búsqueda + export */
+/* Búsqueda + export */
 .tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between;margin:8px 0 6px}
+
+/* Section headers in "Todos" */
+.cat-header{
+  margin:14px 4px 8px;
+  font-weight:800;
+  letter-spacing:.2px;
+  color:#ffd34d;
+  text-shadow:0 1px 0 rgba(0,0,0,.45);
+  border-left:4px solid rgba(255,211,77,.8);
+  padding-left:10px;
+}
 
 /* Footer */
 footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
@@ -121,7 +135,7 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
     <div id="adminModal">
       <div class="modal-card">
         <h3 style="margin:0 0 8px">Ingreso administrador</h3>
-        <p style="opacity:.8;margin-top:0">Colocá tu contraseña para habilitar edición/carga.</p>
+        <p style="opacity:.8;margin-top:0">Contraseña para habilitar edición/carga.</p>
         <input id="adminPass" type="password" placeholder="Contraseña"/>
         <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px">
           <button id="adminCancel" class="btn" type="button">Cancelar</button>
@@ -141,9 +155,17 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
         <select id="editCat">
           <option value="dama">Dama</option>
           <option value="caballero">Caballero</option>
+          <option value="clipon_dama">Clipon Dama</option>
+          <option value="clipon_hombre">Clipon Hombre</option>
           <option value="ninos">Niños</option>
-          <option value="solares">Solares</option>
+          <option value="solares">Lentes de sol</option>
         </select>
+        <div class="row" style="margin-top:6px">
+          <label style="display:flex;align-items:center;gap:8px;background:transparent;border:none;padding:0">
+            <input type="checkbox" id="editOffer" /> Marcar como oferta
+          </label>
+          <input id="editPromo" placeholder="Precio promo (si es oferta)" style="max-width:180px"/>
+        </div>
         <div class="muted" style="font-size:12px">Si no seleccionas imagen, se mantiene la actual.</div>
         <input type="file" id="editImage" accept="image/*" />
         <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px">
@@ -174,11 +196,16 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
 
       <hr style="border:0;border-top:1px solid rgba(255,255,255,.2);margin:16px 0"/>
       <h3>Catálogo por categoría</h3>
-      <div class="category-tabs">
-        <button class="cat-tab active" data-cat="dama">Dama</button>
+
+      <div class="category-tabs" id="catTabs">
+        <button class="cat-tab active" data-cat="todos">Todos</button>
+        <button class="cat-tab" data-cat="dama">Dama</button>
         <button class="cat-tab" data-cat="caballero">Caballero</button>
+        <button class="cat-tab" data-cat="clipon_dama">Clipon Dama</button>
+        <button class="cat-tab" data-cat="clipon_hombre">Clipon Hombre</button>
         <button class="cat-tab" data-cat="ninos">Niños</button>
-        <button class="cat-tab" data-cat="solares">Solares</button>
+        <button class="cat-tab" data-cat="solares">Lentes de sol</button>
+        <button class="cat-tab" data-cat="ofertas">Ofertas</button>
       </div>
 
       <!-- Búsqueda y export -->
@@ -196,12 +223,20 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
 
       <div class="form-upload" id="uploadBlock">
         <h4>Agregar producto</h4>
-        <select id="prodCat">
-          <option value="dama">Dama</option>
-          <option value="caballero">Caballero</option>
-          <option value="ninos">Niños</option>
-          <option value="solares">Solares</option>
-        </select>
+        <div class="row">
+          <select id="prodCat">
+            <option value="dama">Dama</option>
+            <option value="caballero">Caballero</option>
+            <option value="clipon_dama">Clipon Dama</option>
+            <option value="clipon_hombre">Clipon Hombre</option>
+            <option value="ninos">Niños</option>
+            <option value="solares">Lentes de sol</option>
+          </select>
+          <label style="display:flex;align-items:center;gap:8px;background:transparent;border:none">
+            <input type="checkbox" id="prodOffer" /> Oferta
+          </label>
+          <input type="text" id="prodPromo" placeholder="Precio promo (si oferta)" style="max-width:180px"/>
+        </div>
         <input type="text" id="prodCode" placeholder="Código (obligatorio)" />
         <input type="text" id="prodName" placeholder="Nombre del producto" />
         <input type="text" id="prodPrice" placeholder="Precio (ej: ₲ 250.000)" />
@@ -230,7 +265,7 @@ footer{margin:26px 0 8px;color:#ddd;font-size:12px;display:flex;justify-content:
 
   <footer>
     <div>© <span id="year"></span> Óptica Yolanda. Todos los derechos reservados.</div>
-    <div class="muted">Backend Express + Multer (admin con contraseña, edición y borrado, export CSV).</div>
+    <div class="muted">Express + Multer • Admin con edición, ofertas y export CSV.</div>
   </footer>
 </div>
 
@@ -241,6 +276,18 @@ const BRANCHES = [
   { id:'fernando', nombre:'Óptica Yolanda Fernando de la Mora', direccion:'Ruta Mcal. José Estigarribia esquina 15 de Mayo', horarios:'08:00 a 18:00', whatsapp:'595983989860' },
   { id:'caacupe',  nombre:'Óptica Yolanda Caacupé', direccion:'Ruta del Maestro 1807 esquina Independencia Nacional', horarios:'08:00 a 18:00', whatsapp:'595972760646' }
 ];
+
+const CATS = ["dama","caballero","clipon_dama","clipon_hombre","ninos","solares"];
+const CAT_LABEL = {
+  dama: "Dama",
+  caballero: "Caballero",
+  clipon_dama: "Clipon Dama",
+  clipon_hombre: "Clipon Hombre",
+  ninos: "Niños",
+  solares: "Lentes de sol",
+  ofertas: "Ofertas",
+  todos: "Todos"
+};
 
 const tabsEl = document.getElementById('tabs');
 const productsEl = document.getElementById('products');
@@ -255,7 +302,7 @@ const clearSearch = document.getElementById('clearSearch');
 const exportCsv = document.getElementById('exportCsv');
 
 let current = BRANCHES[0].id;
-let currentCat = 'dama';
+let currentCat = 'todos';
 let productosCache = [];
 
 // Admin
@@ -318,7 +365,8 @@ function productCard(p){
   const wrap = document.createElement('div');
   wrap.className = 'product';
   wrap.innerHTML = `
-    <img src="${p.img}" alt="${p.nombre}"/>
+    ${p.oferta ? '<div class="badge-offer">OFERTA</div>' : ''}
+    <img src="${p.img}" alt="${p.nombre}" loading="lazy"/>
     <div class="actions-admin">
       <button class="btn small edit">Editar</button>
       <button class="btn small delete">Eliminar</button>
@@ -326,7 +374,9 @@ function productCard(p){
     <div class="pbd">
       <div class="code">Código: ${p.codigo || '-'}</div>
       <div style="font-weight:700">${p.nombre}</div>
-      <div class="price">${p.precio}</div>
+      <div class="price">
+        ${p.oferta && p.precioPromo ? `<span class="price-old">${p.precio}</span> <span>${p.precioPromo}</span>` : `${p.precio}`}
+      </div>
     </div>`;
   const act = wrap.querySelector('.actions-admin');
   act.style.display = isAdmin() ? 'flex' : 'none';
@@ -348,13 +398,52 @@ async function renderBranch(){
   productosCache = data.productos || [];
 
   const q = (searchCode.value || '').trim().toLowerCase();
-  productosCache
-    .filter(p => (!p.categoria || p.categoria === currentCat))
-    .filter(p => !q || (p.codigo || '').toLowerCase().includes(q))
-    .forEach(p => productsEl.appendChild(productCard(p)));
+
+  function renderList(list){
+    list
+      .filter(p => !q || (p.codigo || '').toLowerCase().includes(q))
+      .forEach(p => productsEl.appendChild(productCard(p)));
+  }
+
+  if (currentCat === 'todos') {
+    // Mostrar ofertas primero
+    const ofertas = productosCache.filter(p => p.oferta);
+    if (ofertas.length){
+      const h = document.createElement('div');
+      h.className = 'cat-header';
+      h.textContent = "Ofertas";
+      productsEl.appendChild(h);
+      renderList(ofertas);
+    }
+    // Luego por categorías
+    CATS.forEach(cat => {
+      const subset = productosCache.filter(p => (p.categoria || '') === cat);
+      if (!subset.length) return;
+      const h = document.createElement('div');
+      h.className = 'cat-header';
+      h.textContent = CAT_LABEL[cat] || cat;
+      productsEl.appendChild(h);
+      renderList(subset);
+    });
+  } else if (currentCat === 'ofertas') {
+    renderList(productosCache.filter(p => p.oferta));
+  } else {
+    const subset = productosCache.filter(p => (p.categoria || '') === currentCat);
+    renderList(subset);
+  }
 
   refreshAdminUI();
 }
+
+// Tabs categorías
+document.getElementById('catTabs').addEventListener('click', (e)=>{
+  const btn = e.target.closest('.cat-tab');
+  if(!btn) return;
+  document.querySelectorAll('.cat-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  currentCat = btn.dataset.cat;
+  renderBranch();
+});
 
 // Contacto
 document.getElementById('contactForm').addEventListener('submit', (e)=>{
@@ -366,23 +455,15 @@ document.getElementById('contactForm').addEventListener('submit', (e)=>{
   window.open(`https://wa.me/${b.whatsapp}?text=Hola,%20soy%20${name}.%20${msg}`, '_blank');
 });
 
-// Categorías
-document.querySelectorAll('.cat-tab').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.cat-tab').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    currentCat = btn.dataset.cat;
-    renderBranch();
-  });
-});
-
 // Buscar + limpiar
 searchCode.addEventListener('input', ()=> renderBranch());
 clearSearch.addEventListener('click', ()=>{ searchCode.value=''; renderBranch(); });
 
-// Export CSV (respeta sucursal y categoría)
+// Export CSV (respeta sucursal y categoría excepto "todos" que exporta todo)
 exportCsv.addEventListener('click', ()=>{
-  const url = `/export/${current}.csv?cat=${encodeURIComponent(currentCat)}`;
+  const url = currentCat === 'todos'
+    ? `/export/${current}.csv`
+    : `/export/${current}.csv?cat=${encodeURIComponent(currentCat)}`
   window.open(url, '_blank');
 });
 
@@ -394,14 +475,20 @@ document.getElementById('uploadBtn').addEventListener('click', async ()=>{
   const price = document.getElementById('prodPrice').value.trim();
   const code = document.getElementById('prodCode').value.trim();
   const cat  = document.getElementById('prodCat').value;
+  const offer = document.getElementById('prodOffer').checked;
+  const promo = document.getElementById('prodPromo').value.trim();
   const file = document.getElementById('prodImage').files[0];
+
   if(!code || !name || !price || !file){ alert('Completa código, nombre, precio e imagen'); return; }
+  if(offer && !promo){ if(!confirm('Marcaste OFERTA sin precio promo. ¿Continuar?')) return; }
 
   const fd = new FormData();
   fd.append('codigo', code);
   fd.append('nombre', name);
   fd.append('precio', price);
   fd.append('categoria', cat);
+  fd.append('oferta', offer ? 'true' : 'false');
+  fd.append('precioPromo', promo);
   fd.append('imagen', file);
 
   const r = await fetch(`/upload/${current}`, { method:'POST', body: fd, headers: adminHeader() });
@@ -410,8 +497,10 @@ document.getElementById('uploadBtn').addEventListener('click', async ()=>{
     document.getElementById('prodName').value='';
     document.getElementById('prodPrice').value='';
     document.getElementById('prodImage').value='';
-    currentCat = cat;
-    document.querySelectorAll('.cat-tab').forEach(b=>b.classList.toggle('active', b.dataset.cat===cat));
+    document.getElementById('prodPromo').value='';
+    document.getElementById('prodOffer').checked=false;
+    currentCat = 'todos';
+    document.querySelectorAll('.cat-tab').forEach(b=>b.classList.toggle('active', b.dataset.cat===currentCat));
     renderBranch();
   }else{
     alert('No se pudo subir. ' + (await r.text()));
@@ -427,6 +516,8 @@ const editCat   = document.getElementById('editCat');
 const editImage = document.getElementById('editImage');
 const editCancel= document.getElementById('editCancel');
 const editSave  = document.getElementById('editSave');
+const editOffer = document.getElementById('editOffer');
+const editPromo = document.getElementById('editPromo');
 let editingId = null;
 
 function openEdit(p){
@@ -436,6 +527,8 @@ function openEdit(p){
   editName.value = p.nombre || '';
   editPrice.value = p.precio || '';
   editCat.value = p.categoria || 'dama';
+  editOffer.checked = !!p.oferta;
+  editPromo.value = p.precioPromo || '';
   editImage.value = '';
   editModal.style.display = 'flex';
 }
@@ -448,13 +541,14 @@ editSave.onclick = async ()=>{
   if(editName.value.trim())  fd.append('nombre',   editName.value.trim());
   if(editPrice.value.trim()) fd.append('precio',   editPrice.value.trim());
   if(editCat.value)          fd.append('categoria', editCat.value);
+  fd.append('oferta', editOffer.checked ? 'true' : 'false');
+  fd.append('precioPromo', editPromo.value.trim());
   if(editImage.files[0])     fd.append('imagen',   editImage.files[0]);
 
   const r = await fetch(`/producto/${current}/${editingId}`, { method:'PUT', body: fd, headers: adminHeader() });
   if(r.ok){
     editModal.style.display = 'none';
-    const updated = await r.json();
-    currentCat = updated.producto.categoria || currentCat;
+    currentCat = 'todos';
     document.querySelectorAll('.cat-tab').forEach(b=>b.classList.toggle('active', b.dataset.cat===currentCat));
     renderBranch();
   }else{
