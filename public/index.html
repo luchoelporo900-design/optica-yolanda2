@@ -5,143 +5,311 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Óptica Yolanda — 3 Sucursales</title>
 <link rel="icon" href="img/logo_optica_yolanda.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
+/* ── Variables ─────────────────────────────────────────────────── */
 :root{
-  --rojo:#8b0000; --negro:#000; --blanco:#fff; --gris:#ccc;
-  --oro:#ffd700; --oro1:#fff2a6; --oro2:#ffd34d; --oro3:#caa231; --oro4:#8f6b00;
-  --green:#22c55e; --orange:#f59e0b; --red:#ef4444; --danger:#ff4040;
+  --bg:        #090909;
+  --bg-card:   #111;
+  --bg-el:     #181818;
+  --bg-input:  #141414;
+
+  --gold:      #C9A84C;
+  --gold-lt:   #E8D5A3;
+  --gold-sh:   #F0E0B0;
+  --gold-dk:   #9A7535;
+  --gold-a:    rgba(201,168,76,.28);
+
+  --white:  #F5F5F7;
+  --muted:  #86868B;
+  --border: rgba(255,255,255,.08);
+
+  --red:   #FF3B30;
+  --green: #34C759;
+  --orange:#FF9F0A;
+  --pink:  #FF375F;
+  --wapp:  #25D366;
+
+  --r:   14px;
+  --rsm: 10px;
+  --rxs: 8px;
+  --pill:999px;
 }
-*{box-sizing:border-box}
+
+/* ── Reset ─────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{
-  margin:0; font-family:"Poppins",system-ui,Segoe UI,Roboto,Ubuntu,Arial;
-  background:
-    linear-gradient(180deg,var(--rojo),var(--negro)),
-    url("https://www.transparenttextures.com/patterns/dark-leather.png");
-  background-blend-mode:overlay; background-size:cover; color:var(--blanco);
+  font-family:'Poppins',system-ui,-apple-system,sans-serif;
+  background:var(--bg);color:var(--white);
+  min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5;
 }
-.container{max-width:1100px;margin:0 auto;padding:16px}
+.container{max-width:1100px;margin:0 auto;padding:0 16px 48px}
 
-/* Header boutique */
-header{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:25px 0 10px;text-align:center;border-bottom:1px solid rgba(255,255,255,.18)}
+/* ── Inputs / Select globales ──────────────────────────────────── */
+input:not([type=checkbox]):not([type=file]),select{
+  width:100%;background:var(--bg-input);border:1px solid var(--border);
+  border-radius:var(--rxs);color:var(--white);font-family:inherit;
+  font-size:14px;padding:10px 14px;outline:none;
+  transition:border-color .2s;display:block;margin-bottom:10px;
+}
+input:not([type=checkbox]):not([type=file]):focus,select:focus{border-color:var(--gold)}
+input::placeholder{color:var(--muted)}
+select option{background:#1a1a1a;color:var(--white)}
+input[type=file]{
+  width:100%;color:var(--muted);font-family:inherit;
+  font-size:13px;margin-bottom:10px;display:block;cursor:pointer;
+}
+input[type=file]::file-selector-button{
+  background:var(--bg-el);color:var(--gold);border:1px solid var(--gold-a);
+  border-radius:var(--rxs);padding:6px 12px;font-family:inherit;
+  font-size:12px;font-weight:600;cursor:pointer;margin-right:10px;transition:all .2s;
+}
+input[type=file]::file-selector-button:hover{background:rgba(201,168,76,.1)}
+input[type=checkbox]{width:16px;height:16px;accent-color:var(--gold);cursor:pointer}
+
+/* ── Header ────────────────────────────────────────────────────── */
+header{
+  display:flex;flex-direction:column;align-items:center;
+  padding:48px 16px 28px;text-align:center;border-bottom:1px solid var(--border);
+}
 header img{
-  width:150px;height:auto;margin-bottom:10px;border-radius:12px;position:relative;overflow:hidden;
-  box-shadow:0 4px 20px rgba(0,0,0,.4);transition: transform .4s ease, box-shadow .4s ease;
+  width:88px;height:88px;object-fit:contain;border-radius:20px;margin-bottom:18px;
+  box-shadow:0 8px 32px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.06);
+  transition:transform .4s ease,box-shadow .4s ease;
 }
-header img:hover{transform:scale(1.03);box-shadow:0 6px 25px rgba(255,215,0,.4)}
+header img:hover{
+  transform:scale(1.05);
+  box-shadow:0 12px 40px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.08),0 0 40px rgba(201,168,76,.2);
+}
 header h1{
-  margin:0;font-size:28px;letter-spacing:1px;font-weight:700;
-  background:linear-gradient(135deg,var(--oro1),var(--oro2) 30%,var(--oro3) 55%,var(--oro1) 70%,var(--oro4) 100%);
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-fill-color:transparent;
-  background-size:200% 100%; animation:goldSparkle 6s linear infinite; text-shadow:0 1px 1px rgba(0,0,0,.35);
+  font-size:clamp(22px,4.5vw,30px);font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  background:linear-gradient(120deg,var(--gold-dk) 0%,var(--gold-lt) 35%,var(--gold-sh) 50%,var(--gold-lt) 65%,var(--gold-dk) 100%);
+  background-size:250% 100%;-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;animation:goldShimmer 6s linear infinite;margin-bottom:8px;
 }
-@keyframes goldSparkle{0%{background-position:0% 0}100%{background-position:200% 0}}
-.subtitle{font-size:14px;color:var(--gris)}
-.top-actions{margin-top:8px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.badge{display:none;background:#14b814;color:#000;padding:6px 10px;border-radius:999px;font-weight:700}
-
-/* Tabs sucursales */
-.tabs{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin:16px 0}
-.tab{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);padding:8px 14px;border-radius:10px;cursor:pointer;font-weight:600;transition:all .2s}
-.tab:hover{background:rgba(255,255,255,.25)}
-.tab.active{background:linear-gradient(135deg,var(--oro1),var(--oro2) 40%,var(--oro3));color:#201a00;border-color:rgba(255,255,255,.6);box-shadow:0 0 0 1px rgba(255,255,255,.35) inset,0 6px 18px rgba(255,215,0,.25)}
-
-/* Layout & Cards */
-.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
-@media (max-width:960px){.grid{grid-template-columns:1fr}}
-.card{
-  background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.25);border-radius:16px;padding:18px;margin-bottom:18px;
-  box-shadow:0 10px 28px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.06) inset;backdrop-filter:blur(6px)
+@keyframes goldShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.subtitle{font-size:13px;color:var(--muted);font-weight:400;max-width:380px;margin-bottom:20px}
+.top-actions{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+.badge{
+  background:rgba(52,199,89,.12);color:var(--green);border:1px solid rgba(52,199,89,.25);
+  padding:5px 14px;border-radius:var(--pill);font-size:12px;font-weight:600;display:none;
 }
-.card h3{margin:0 0 10px}
-.muted{color:var(--gris)}
-.info{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media (max-width:720px){.info{grid-template-columns:1fr}}
 
-/* Botones */
-.btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(180deg,var(--oro2),var(--oro3));color:#201a00;font-weight:700;border:1px solid rgba(255,255,255,.65);border-radius:10px;padding:10px 14px;text-decoration:none;cursor:pointer;transition:all .2s}
-.btn:hover{filter:brightness(1.05);box-shadow:0 10px 26px rgba(255,215,0,.35)}
+/* ── Botones ────────────────────────────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  background:transparent;color:var(--gold);border:1px solid var(--gold-a);
+  border-radius:var(--rsm);padding:9px 18px;font-family:inherit;
+  font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;
+  transition:all .2s;white-space:nowrap;line-height:1;
+}
+.btn:hover{background:rgba(201,168,76,.1);border-color:var(--gold);box-shadow:0 0 20px rgba(201,168,76,.12)}
+#wapp{color:var(--wapp);border-color:rgba(37,211,102,.3)}
+#wapp:hover{background:rgba(37,211,102,.1);border-color:var(--wapp);box-shadow:0 0 20px rgba(37,211,102,.15)}
+#sendFav{color:var(--wapp);border-color:rgba(37,211,102,.3)}
+#sendFav:hover{background:rgba(37,211,102,.1);border-color:var(--wapp)}
 
-/* Categorías */
-.category-tabs{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin:10px 0 14px}
-.cat-tab{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:8px 14px;cursor:pointer;transition:all .2s}
-.cat-tab:hover{background:rgba(255,255,255,.25)}
-.cat-tab.active{background:var(--oro2);color:#000;border-color:var(--oro2)}
+/* ── Tabs sucursales ─────────────────────────────────────────────── */
+.tabs{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;padding:22px 16px}
+.tab{
+  background:var(--bg-el);color:var(--muted);border:1px solid var(--border);
+  padding:8px 20px;border-radius:var(--pill);cursor:pointer;font-family:inherit;
+  font-size:13px;font-weight:500;transition:all .2s;
+}
+.tab:hover{border-color:rgba(255,255,255,.18);color:var(--white)}
+.tab.active{background:rgba(201,168,76,.1);color:var(--gold);border-color:var(--gold-a);font-weight:600}
 
-/* Productos */
-.products{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-@media (max-width:960px){.products{grid-template-columns:repeat(2,1fr)}}
-@media (max-width:560px){.products{grid-template-columns:1fr}}
-.product{position:relative;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:12px;overflow:hidden;transition:transform .2s,box-shadow .2s}
-.product:hover{transform:translateY(-3px);box-shadow:0 5px 20px rgba(255,215,0,.25)}
-.product img{width:100%;height:180px;object-fit:cover;display:block;cursor:pointer}
-.product .pbd{padding:12px}
-.code{font-size:12px;opacity:.8;margin-bottom:3px}
-.price{color:var(--oro2);font-weight:800;margin-top:4px;text-shadow:0 1px 0 rgba(0,0,0,.35)}
-.price-old{opacity:.7;text-decoration:line-through;margin-right:6px}
-.badge-offer{position:absolute;top:8px;left:8px;background:var(--danger);color:#fff;padding:4px 8px;border-radius:8px;font-size:12px;font-weight:800;box-shadow:0 2px 8px rgba(0,0,0,.35)}
-.badge-discount{position:absolute;top:8px;right:8px;color:#08210f;font-weight:900;font-size:12px;padding:4px 8px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.35)}
-.badge-discount.disc-10{background:var(--green)}
-.badge-discount.disc-20{background:var(--orange)}
-.badge-discount.disc-30{background:var(--red)}
-.actions-admin{position:absolute;top:8px;right:8px;display:none;gap:6px}
-.actions-admin .small{font-size:12px;padding:6px 8px;border-radius:8px}
+/* ── Cards ──────────────────────────────────────────────────────── */
+.grid{display:flex;flex-direction:column;gap:16px}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:22px}
+.card h3{font-size:15px;font-weight:700;margin-bottom:14px;color:var(--white)}
+.muted{color:var(--muted);font-size:13px}
 
-/* Favoritos */
+/* ── Branch info ─────────────────────────────────────────────────── */
+.info{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:600px){.info{grid-template-columns:1fr}}
+.info .muted{font-size:13px;color:var(--muted);margin-bottom:10px;line-height:1.7}
+.info .muted strong{color:var(--white);font-weight:600}
+.actions{margin-top:14px}
+hr{border:0;border-top:1px solid var(--border);margin:20px 0}
+
+/* ── Category pills ─────────────────────────────────────────────── */
+.category-tabs{
+  display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;
+  padding-bottom:6px;margin:6px 0 14px;
+  scrollbar-width:none;-ms-overflow-style:none;
+}
+.category-tabs::-webkit-scrollbar{display:none}
+.cat-tab{
+  background:var(--bg-el);color:var(--muted);border:1px solid var(--border);
+  border-radius:var(--pill);padding:6px 16px;font-family:inherit;
+  font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;
+  flex-shrink:0;transition:all .2s;
+}
+.cat-tab:hover{color:var(--white);border-color:rgba(255,255,255,.2)}
+.cat-tab.active{background:rgba(201,168,76,.12);color:var(--gold);border-color:var(--gold-a);font-weight:600}
+
+/* ── Favoritos / Búsqueda ─────────────────────────────────────── */
+.fav-tools{
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  justify-content:space-between;margin-bottom:16px;
+}
+#searchCode{max-width:200px;margin-bottom:0;padding:8px 12px;font-size:13px;border-radius:var(--pill)}
+.fav-counter{
+  background:rgba(255,55,95,.12);color:var(--pink);
+  border:1px solid rgba(255,55,95,.25);border-radius:var(--pill);
+  padding:5px 12px;font-size:12px;font-weight:600;white-space:nowrap;
+}
+
+/* ── Products grid ──────────────────────────────────────────────── */
+.products{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:860px){.products{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:420px){.products{grid-template-columns:repeat(2,1fr);gap:10px}}
+
+/* ── Product card ───────────────────────────────────────────────── */
+.product{
+  position:relative;background:var(--bg-el);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
+  transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;
+  display:flex;flex-direction:column;
+}
+.product:hover{
+  transform:translateY(-4px);border-color:var(--gold-a);
+  box-shadow:0 12px 36px rgba(0,0,0,.5),0 0 0 1px rgba(201,168,76,.08) inset;
+}
+.product img{
+  width:100%;aspect-ratio:1/1;object-fit:cover;display:block;
+  cursor:zoom-in;background:#1c1c1c;transition:transform .4s ease;
+}
+.product:hover img{transform:scale(1.03)}
+.product .pbd{padding:10px 12px 38px;flex:1;display:flex;flex-direction:column;gap:3px}
+.code{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.8px}
+.price{font-size:13px;font-weight:700;color:var(--gold);margin-top:3px}
+.price-old{font-size:11px;color:var(--muted);text-decoration:line-through;font-weight:400;margin-right:3px}
+
+/* Badges */
+.badge-offer{
+  position:absolute;top:8px;left:8px;background:var(--red);color:#fff;
+  padding:3px 9px;border-radius:var(--pill);font-size:9px;font-weight:800;
+  letter-spacing:.8px;text-transform:uppercase;z-index:2;
+}
+.badge-discount{
+  position:absolute;top:8px;right:8px;color:#fff;
+  font-weight:700;font-size:10px;padding:3px 8px;border-radius:var(--pill);z-index:1;
+}
+.badge-discount.disc-10{background:rgba(52,199,89,.85);backdrop-filter:blur(4px)}
+.badge-discount.disc-20{background:rgba(255,159,10,.85);backdrop-filter:blur(4px)}
+.badge-discount.disc-30{background:rgba(255,59,48,.85);backdrop-filter:blur(4px)}
+
+/* Fav button */
 .fav-btn{
-  position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.35);
-  color:#fff;border-radius:999px;padding:6px 9px;cursor:pointer;font-weight:800
+  position:absolute;bottom:8px;right:10px;
+  background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.55);border-radius:var(--pill);
+  width:28px;height:28px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:13px;font-weight:700;
+  backdrop-filter:blur(6px);transition:all .2s;z-index:3;padding:0;
 }
-.fav-btn.active{background:#ff4d7e;border-color:#ff4d7e}
-.fav-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between;margin:8px 0 6px}
-.fav-counter{background:#ff4d7e;color:#fff;border-radius:999px;padding:6px 10px;font-weight:800}
+.fav-btn:hover{border-color:var(--pink);color:var(--pink);background:rgba(255,55,95,.12)}
+.fav-btn.active{background:var(--pink);border-color:var(--pink);color:#fff}
 
-/* Section headers in "Todos" */
+/* Admin actions */
+.actions-admin{position:absolute;bottom:8px;left:10px;display:none;gap:5px;z-index:3}
+.actions-admin .small{font-size:11px;padding:4px 10px;border-radius:var(--rxs)}
+.actions-admin .delete{color:#ff6b6b;border-color:rgba(255,107,107,.3)}
+.actions-admin .delete:hover{background:rgba(255,59,48,.15);border-color:var(--red)}
+
+/* Cat header en "Todos" */
 .cat-header{
-  margin:14px 4px 8px;
-  font-weight:800;
-  letter-spacing:.2px;
-  color:#ffd34d;
-  text-shadow:0 1px 0 rgba(0,0,0,.45);
-  border-left:4px solid rgba(255,211,77,.8);
-  padding-left:10px;
+  grid-column:1/-1;font-size:10px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--muted);
+  margin:10px 0 2px;padding-bottom:8px;border-bottom:1px solid var(--border);
 }
 
-/* Footer */
-footer{margin:26px 0 8px}
+/* ── Admin upload form ───────────────────────────────────────────── */
+.form-upload{display:none;margin-top:24px;padding-top:24px;border-top:1px solid var(--border)}
+.form-upload h4{
+  font-size:11px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--gold);margin-bottom:16px;opacity:.85;
+}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:6px}
+.row input:not([type=checkbox]):not([type=file]),.row select{margin-bottom:0;flex:1;min-width:120px}
+.row label{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;font-weight:500;white-space:nowrap;cursor:pointer}
+#uploadBtn{
+  width:100%;padding:13px;background:var(--gold);color:#090909;
+  border:none;border-radius:var(--rsm);font-family:inherit;
+  font-size:14px;font-weight:700;cursor:pointer;margin-top:6px;transition:all .2s;
+}
+#uploadBtn:hover{background:var(--gold-lt);box-shadow:0 4px 24px rgba(201,168,76,.3)}
 
-/* Modales */
-#adminModal,#editModal,#vendorModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;align-items:center;justify-content:center;padding:16px}
-.modal-card{background:#111;border:1px solid rgba(255,255,255,.25);border-radius:14px;max-width:420px;width:100%;padding:18px;color:#fff}
-.vendor-list{display:flex;flex-direction:column;gap:10px;margin-top:8px}
-.vendor-btn{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#1a1a1a;border:1px solid rgba(255,255,255,.25);border-radius:10px;padding:10px 12px;cursor:pointer}
-.vendor-btn:hover{filter:brightness(1.05)}
-.vendor-phone{opacity:.8;font-size:12px}
+/* ── Modales ────────────────────────────────────────────────────── */
+#adminModal,#editModal,#vendorModal{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);
+  z-index:9999;align-items:center;justify-content:center;
+  padding:16px;backdrop-filter:blur(6px);
+}
+.modal-card{
+  background:#161616;border:1px solid rgba(255,255,255,.1);border-radius:var(--r);
+  max-width:420px;width:100%;padding:24px;color:var(--white);
+  box-shadow:0 24px 64px rgba(0,0,0,.8);
+}
+.modal-card h3{font-size:17px;font-weight:700;margin-bottom:6px}
+.modal-card .muted{margin-bottom:14px}
+.vendor-list{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.vendor-btn{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  background:var(--bg-el);border:1px solid var(--border);border-radius:var(--rsm);
+  padding:13px 16px;cursor:pointer;color:var(--white);font-family:inherit;
+  font-size:14px;font-weight:500;transition:all .2s;text-align:left;
+}
+.vendor-btn:hover{border-color:var(--gold-a);background:rgba(201,168,76,.06);color:var(--gold)}
+.vendor-phone{color:var(--muted);font-size:12px}
 
-/* === Modal Zoom de imagen === */
+/* ── Image zoom ─────────────────────────────────────────────────── */
 #imgZoomModal{
-  display:none; position:fixed; inset:0; z-index:99999;
-  background:rgba(0,0,0,.85); align-items:center; justify-content:center;
+  display:none;position:fixed;inset:0;z-index:99999;
+  background:rgba(0,0,0,.92);align-items:center;justify-content:center;
+  backdrop-filter:blur(10px);
 }
-#imgZoomModal.open{ display:flex; }
+#imgZoomModal.open{display:flex}
 #imgZoomModal img{
-  max-width:92vw; max-height:85vh; border-radius:12px;
-  box-shadow:0 0 30px rgba(0,0,0,.6);
+  max-width:90vw;max-height:88vh;border-radius:var(--r);
+  box-shadow:0 0 80px rgba(0,0,0,.6);object-fit:contain;
 }
-#imgZoomModal .img-zoom-close{
-  position:absolute; top:16px; right:20px;
-  background:#ff4040; color:#fff; border:none; cursor:pointer;
-  font-weight:800; font-size:20px; border-radius:8px; padding:6px 12px;
+.img-zoom-close{
+  position:absolute;top:16px;right:16px;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);
+  color:var(--white);cursor:pointer;font-size:13px;font-family:inherit;
+  font-weight:600;border-radius:var(--rsm);padding:8px 16px;
+  transition:all .2s;backdrop-filter:blur(4px);
 }
-#imgZoomModal .img-zoom-close:hover{ filter:brightness(1.1); }
+.img-zoom-close:hover{background:rgba(255,59,48,.8);border-color:var(--red)}
+
+/* ── Footer ─────────────────────────────────────────────────────── */
+footer{text-align:center;padding:24px 16px;border-top:1px solid var(--border);margin-top:8px}
+footer div{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted)}
+
+/* ── Responsive ─────────────────────────────────────────────────── */
+@media(max-width:540px){
+  header{padding:32px 16px 20px}
+  header img{width:72px;height:72px}
+  .card{padding:16px}
+  .tabs{padding:16px 8px}
+  .fav-tools{flex-direction:column;align-items:stretch;gap:8px}
+  #searchCode{max-width:100%}
+}
 </style>
 </head>
 <body>
 <div class="container">
+
+  <!-- ── Header ── -->
   <header>
     <img src="img/logo_optica_yolanda.png" alt="Óptica Yolanda" />
     <h1>Óptica Yolanda</h1>
-    <div class="subtitle">Elige la sucursal y mira dirección, horarios, WhatsApp y catálogo.</div>
-
+    <p class="subtitle">Elige la sucursal y mirá dirección, horarios, WhatsApp y catálogo.</p>
     <div class="top-actions">
       <button id="adminBtn" class="btn" type="button">Administrador</button>
       <span id="adminBadge" class="badge">Admin activo</span>
@@ -150,24 +318,24 @@ footer{margin:26px 0 8px}
     <!-- Modal Admin -->
     <div id="adminModal">
       <div class="modal-card">
-        <h3 style="margin:0 0 8px">Ingreso administrador</h3>
-        <p style="opacity:.8;margin-top:0">Contraseña para habilitar edición/carga.</p>
-        <input id="adminPass" type="password" placeholder="Contraseña"/>
-        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px">
+        <h3>Ingreso administrador</h3>
+        <p class="muted">Contraseña para habilitar edición y carga.</p>
+        <input id="adminPass" type="password" placeholder="Contraseña" />
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:6px">
           <button id="adminCancel" class="btn" type="button">Cancelar</button>
-          <button id="adminOk" class="btn" type="button">Ingresar</button>
+          <button id="adminOk"     class="btn" type="button">Ingresar</button>
         </div>
-        <div id="adminError" style="color:#ffb3b3;margin-top:10px;display:none">Contraseña incorrecta</div>
+        <div id="adminError" style="color:#ff6b6b;margin-top:10px;font-size:13px;display:none">Contraseña incorrecta</div>
       </div>
     </div>
 
     <!-- Modal Editar -->
     <div id="editModal">
       <div class="modal-card">
-        <h3 style="margin:0 0 8px">Editar producto</h3>
-        <input id="editCode" placeholder="Código"/>
-        <input id="editName" placeholder="Nombre"/>
-        <input id="editPrice" placeholder="Precio"/>
+        <h3>Editar producto</h3>
+        <input id="editCode"  placeholder="Código" />
+        <input id="editName"  placeholder="Nombre" />
+        <input id="editPrice" placeholder="Precio" />
         <select id="editCat">
           <option value="dama">Dama</option>
           <option value="caballero">Caballero</option>
@@ -176,36 +344,36 @@ footer{margin:26px 0 8px}
           <option value="ninos">Niños</option>
           <option value="solares">Lentes de sol</option>
         </select>
-        <div class="row" style="margin-top:6px">
-          <label style="display:flex;align-items:center;gap:8px;background:transparent;border:none;padding:0">
-            <input type="checkbox" id="editOffer" /> Marcar como oferta
-          </label>
-          <input id="editPromo" placeholder="Precio promo (si es oferta)" style="max-width:180px"/>
+        <div class="row" style="margin-bottom:10px">
+          <label><input type="checkbox" id="editOffer" /> Marcar como oferta</label>
+          <input id="editPromo" placeholder="Precio promo" style="max-width:180px;margin-bottom:0" />
         </div>
-        <div class="muted" style="font-size:12px">Si no seleccionas imagen, se mantiene la actual.</div>
+        <p class="muted" style="margin-bottom:8px;font-size:12px">Sin imagen nueva se mantiene la actual.</p>
         <input type="file" id="editImage" accept="image/*" />
-        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px">
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
           <button id="editCancel" class="btn" type="button">Cancelar</button>
-          <button id="editSave" class="btn" type="button">Guardar cambios</button>
+          <button id="editSave"   class="btn" type="button">Guardar cambios</button>
         </div>
       </div>
     </div>
 
-    <!-- Modal Selección de Vendedora -->
+    <!-- Modal Vendedora -->
     <div id="vendorModal">
       <div class="modal-card">
-        <h3 style="margin:0 0 8px">Elegí la vendedora</h3>
-        <p class="muted" style="margin:0 0 10px">Se enviará por WhatsApp.</p>
+        <h3>Elegí la vendedora</h3>
+        <p class="muted">El mensaje se enviará por WhatsApp.</p>
         <div id="vendorList" class="vendor-list"></div>
-        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:12px">
+        <div style="display:flex;justify-content:flex-end;margin-top:14px">
           <button id="vendorCancel" class="btn" type="button">Cancelar</button>
         </div>
       </div>
     </div>
   </header>
 
+  <!-- ── Branch tabs ── -->
   <div class="tabs" id="tabs"></div>
 
+  <!-- ── Main content ── -->
   <div class="grid">
     <div class="card">
       <h3 id="branchTitle">Sucursal</h3>
@@ -217,14 +385,15 @@ footer{margin:26px 0 8px}
             <button class="btn" id="wapp" type="button">WhatsApp</button>
           </div>
         </div>
-        <div style="min-height:200px">
-          <div id="mapEmbed" style="height:200px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;color:#eee;font-size:13px;background:rgba(255,255,255,.05)">Mapa (opcional)</div>
+        <div>
+          <div id="mapEmbed" style="height:200px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#86868B;font-size:13px;background:#181818">Mapa (opcional)</div>
         </div>
       </div>
 
-      <hr style="border:0;border-top:1px solid rgba(255,255,255,.2);margin:16px 0"/>
-      <h3>Catálogo por categoría</h3>
+      <hr />
+      <h3>Catálogo</h3>
 
+      <!-- Category pills -->
       <div class="category-tabs" id="catTabs">
         <button class="cat-tab active" data-cat="todos">Todos</button>
         <button class="cat-tab" data-cat="dama">Dama</button>
@@ -237,21 +406,23 @@ footer{margin:26px 0 8px}
         <button class="cat-tab" data-cat="favoritos">Favoritos ❤️</button>
       </div>
 
-      <!-- Búsqueda / Favoritos -->
+      <!-- Search + Favorites -->
       <div class="fav-tools">
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <input id="searchCode" placeholder="Buscar por código..." style="max-width:220px" />
+          <input id="searchCode" placeholder="Buscar por código..." />
           <button id="clearSearch" class="btn" type="button">Limpiar</button>
         </div>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <span id="favCounter" class="fav-counter">0 favoritos</span>
-          <button id="copyFav" class="btn" type="button">Copiar portapapeles</button>
-          <button id="sendFav" class="btn" type="button">Enviar favoritos por WhatsApp</button>
+          <button id="copyFav" class="btn" type="button">Copiar lista</button>
+          <button id="sendFav" class="btn" type="button">Enviar por WhatsApp</button>
         </div>
       </div>
 
+      <!-- Products -->
       <div class="products" id="products"></div>
 
+      <!-- Admin upload form -->
       <div class="form-upload" id="uploadBlock">
         <h4>Agregar producto</h4>
         <div class="row">
@@ -263,20 +434,19 @@ footer{margin:26px 0 8px}
             <option value="ninos">Niños</option>
             <option value="solares">Lentes de sol</option>
           </select>
-          <label style="display:flex;align-items:center;gap:8px;background:transparent;border:none">
-            <input type="checkbox" id="prodOffer" /> Oferta
-          </label>
-          <input type="text" id="prodPromo" placeholder="Precio promo (si oferta)" style="max-width:180px"/>
+          <label><input type="checkbox" id="prodOffer" /> Oferta</label>
+          <input type="text" id="prodPromo" placeholder="Precio promo" style="max-width:160px;margin-bottom:0" />
         </div>
         <input type="text"  id="prodCode"  placeholder="Código (obligatorio)" />
         <input type="text"  id="prodName"  placeholder="Nombre del producto" />
         <input type="text"  id="prodPrice" placeholder="Precio (ej: ₲ 250.000)" />
         <input type="file"  id="prodImage" accept="image/*" />
-        <button id="uploadBtn">Cargar producto a esta sucursal</button>
-        <div class="muted" style="font-size:12px">Las imágenes se guardan en el servidor y quedarán visibles para esta sucursal.</div>
+        <button id="uploadBtn" type="button">Cargar producto en esta sucursal</button>
+        <p class="muted" style="font-size:11px;margin-top:8px">Las imágenes se guardan en Cloudinary.</p>
       </div>
     </div>
 
+    <!-- About -->
     <div class="card">
       <h3>Sobre Óptica Yolanda</h3>
       <p class="muted">Especialistas en lentes, armazones y contacto. Examen visual y entrega rápida. Calidad al mejor precio.</p>
@@ -284,16 +454,13 @@ footer{margin:26px 0 8px}
   </div>
 
   <footer>
-    <div style="width:100%;text-align:center;font-weight:800;color:#ffd34d;
-                text-shadow:0 0 10px rgba(255,215,0,.4),0 0 20px rgba(255,215,0,.2)">
-      ÓPTICA YOLANDA – PY
-    </div>
+    <div>Óptica Yolanda &mdash; PY</div>
   </footer>
 </div>
 
 <!-- Modal de imagen ampliada -->
 <div id="imgZoomModal" aria-hidden="true">
-  <button id="imgZoomClose" class="img-zoom-close" type="button">× Cerrar</button>
+  <button id="imgZoomClose" class="img-zoom-close" type="button">✕ Cerrar</button>
   <img id="imgZoomImg" alt="Vista ampliada" />
 </div>
 
@@ -486,7 +653,7 @@ function productCard(p){
     <button class="fav-btn ${isFav(p.id)?'active':''}" title="Agregar a favoritos">❤</button>
     <div class="pbd">
       <div class="code">Código: ${p.codigo || '-'}</div>
-      <div style="font-weight:700">${p.nombre}</div>
+      <div style="font-weight:700;font-size:13px;line-height:1.3">${p.nombre}</div>
       <div class="price">
         ${p.oferta && p.precioPromo
           ? `<span class="price-old">${p.precio}</span> <span>${p.precioPromo}</span> <span style="font-size:12px;opacity:.9">(-${pct}%)</span>`
@@ -743,7 +910,7 @@ async function delProduct(p){
 })();
 
 /* ===================== INIT ===================== */
-document.getElementById('adminError'); // placeholder (mantenemos referencia limpia)
+document.getElementById('adminError');
 renderBranch();
 </script>
 </body>
